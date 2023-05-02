@@ -1,5 +1,6 @@
 package com.allan.boardbuddies;
 
+// defining a Note
 public class Note {
     private String title;
     private String content;

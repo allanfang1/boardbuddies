@@ -1,16 +1,20 @@
 package com.allan.boardbuddies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import java.util.ArrayList;
+// RecyclerView imports
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.os.Bundle;
-
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
+    // Array of Note objects
     private ArrayList<Note> notes = new ArrayList<Note>();
     private RecyclerView recyclerView;
+    /** On activity creation
+    * Param passes data between states of activity (e.g. orientation change/running in background)
+    * R for res folder, auto-generated resource IDs from activity_main
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
