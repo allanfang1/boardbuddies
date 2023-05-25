@@ -1,15 +1,24 @@
 package com.allan.boardbuddies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import java.util.ArrayList;
+import android.view.MenuItem;
+
 // RecyclerView imports
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-public class MainActivity extends AppCompatActivity {
+import com.allan.boardbuddies.fragments.NotesFragment;
+import com.allan.boardbuddies.fragments.SharedFragment;
+import com.allan.boardbuddies.fragments.TrashFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class MainActivity extends AppCompatActivity
+        implements BottomNavigationView
+        .OnNavigationItemSelectedListener {
+
+    BottomNavigationView bottomNavigationView;
     // Array of Note objects
-    private ArrayList<Note> notes = new ArrayList<Note>();
     private RecyclerView recyclerView;
     /** On activity creation
     * Param passes data between states of activity (e.g. orientation change/running in background)
@@ -19,15 +28,39 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        notes.add(new Note("hello", "bob"));
-        notes.add(new Note("my", "bob"));
-        notes.add(new Note("friend", "bob"));
-        notes.add(new Note("Kaitlyn", "bob"));
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        recyclerView = findViewById(R.id.main_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        NoteAdapter adapter = new NoteAdapter(notes);
-        recyclerView.setAdapter(adapter);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.menu_notes);
+    }
+    NotesFragment notesFragment = new NotesFragment();
+    SharedFragment sharedFragment = new SharedFragment();
+    TrashFragment trashFragment = new TrashFragment();
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_notes:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayout, notesFragment)
+                        .commit();
+                return true;
+
+            case R.id.menu_shared:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayout, sharedFragment)
+                        .commit();
+                return true;
+
+            case R.id.menu_trash:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayout, trashFragment)
+                        .commit();
+                return true;
+        }
+        return false;
     }
 }
