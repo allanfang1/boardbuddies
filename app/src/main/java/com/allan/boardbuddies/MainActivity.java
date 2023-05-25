@@ -5,13 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-// RecyclerView imports
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.allan.boardbuddies.fragments.NotesFragment;
 import com.allan.boardbuddies.fragments.SharedFragment;
 import com.allan.boardbuddies.fragments.TrashFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity
 
     BottomNavigationView bottomNavigationView;
     // Array of Note objects
-    private RecyclerView recyclerView;
+
     /** On activity creation
     * Param passes data between states of activity (e.g. orientation change/running in background)
     * R for res folder, auto-generated resource IDs from activity_main
@@ -28,8 +29,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.menu_notes);
     }

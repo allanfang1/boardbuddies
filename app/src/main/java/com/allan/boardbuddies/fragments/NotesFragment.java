@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import com.allan.boardbuddies.Note;
 import com.allan.boardbuddies.NoteAdapter;
 import com.allan.boardbuddies.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 public class NotesFragment extends Fragment {
     private ArrayList<Note> notes = new ArrayList<Note>();
     private RecyclerView recyclerView;
+    private FloatingActionButton addNoteFab;
+    private NoteAdapter adapter;
     public NotesFragment() {
         // Required empty public constructor
     }
@@ -31,21 +35,38 @@ public class NotesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        notes.add(new Note("hello", "bob"));
-        notes.add(new Note("my", "bob"));
-        notes.add(new Note("friend", "bob"));
-        notes.add(new Note("Kaitlyn", "bob"));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            notes = (ArrayList<Note>)bundle.getSerializable("myNotes");
+            // Handle the retrieved data as needed
+        }
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
         recyclerView = view.findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        NoteAdapter adapter = new NoteAdapter(notes);
+        adapter = new NoteAdapter(notes);
         recyclerView.setAdapter(adapter);
         // Inflate the layout for this fragment
         return view;
+    }
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState){
+        addNoteFab = view.findViewById(R.id.add_note_fab);
+        addNoteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notes.add(new Note("yay", "bob"));
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        notes.add(new Note("hello", "bob"));
+        notes.add(new Note("my", "bob"));
+        notes.add(new Note("friend", "bob"));
+        notes.add(new Note("Kaitlyn", "bob"));
     }
 }
