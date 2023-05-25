@@ -63,10 +63,5 @@ public class NotesFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
-
-        notes.add(new Note("hello", "bob"));
-        notes.add(new Note("my", "bob"));
-        notes.add(new Note("friend", "bob"));
-        notes.add(new Note("Kaitlyn", "bob"));
     }
 }
