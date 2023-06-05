@@ -1,16 +1,24 @@
 package com.allan.boardbuddies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import java.util.ArrayList;
-// RecyclerView imports
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.Fragment;
 
-public class MainActivity extends AppCompatActivity {
-    // Array of Note objects
-    private ArrayList<Note> notes = new ArrayList<Note>();
-    private RecyclerView recyclerView;
+import android.os.Bundle;
+import android.view.MenuItem;
+import com.allan.boardbuddies.fragments.NotesFragment;
+import com.allan.boardbuddies.fragments.SharedFragment;
+import com.allan.boardbuddies.fragments.TrashFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
+
+public class MainActivity extends AppCompatActivity
+        implements NavigationBarView
+        .OnItemSelectedListener {
+
+    BottomNavigationView bottomNavigationView;
+
     /** On activity creation
     * Param passes data between states of activity (e.g. orientation change/running in background)
     * R for res folder, auto-generated resource IDs from activity_main
@@ -19,15 +27,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        notes.add(new Note("hello", "bob"));
-        notes.add(new Note("my", "bob"));
-        notes.add(new Note("friend", "bob"));
-        notes.add(new Note("Kaitlyn", "bob"));
 
-        recyclerView = findViewById(R.id.main_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        NoteAdapter adapter = new NoteAdapter(notes);
-        recyclerView.setAdapter(adapter);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.menu_notes);
+    }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment;
+        switch (item.getItemId()) {
+            case R.id.menu_notes:
+                fragment = new NotesFragment();
+                break;
+            case R.id.menu_shared:
+                fragment = new SharedFragment();
+                break;
+            case R.id.menu_trash:
+                fragment = new TrashFragment();
+                break;
+            default:
+                return false;
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayout, fragment)
+                .commit();
+        return true;
     }
 }

@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">boardbuddies</string>
+    <string name="app_name">BoardBuddies</string>
+    <string name="submit">Submit</string>
 </resources>
