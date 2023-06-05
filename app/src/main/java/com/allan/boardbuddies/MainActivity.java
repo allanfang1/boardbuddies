@@ -2,24 +2,22 @@ package com.allan.boardbuddies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import android.os.Bundle;
 import android.view.MenuItem;
-
-
 import com.allan.boardbuddies.fragments.NotesFragment;
 import com.allan.boardbuddies.fragments.SharedFragment;
 import com.allan.boardbuddies.fragments.TrashFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements BottomNavigationView
-        .OnNavigationItemSelectedListener {
+        implements NavigationBarView
+        .OnItemSelectedListener {
 
     BottomNavigationView bottomNavigationView;
-    // Array of Note objects
 
     /** On activity creation
     * Param passes data between states of activity (e.g. orientation change/running in background)
@@ -31,37 +29,30 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setOnItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.menu_notes);
     }
-    NotesFragment notesFragment = new NotesFragment();
-    SharedFragment sharedFragment = new SharedFragment();
-    TrashFragment trashFragment = new TrashFragment();
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment;
         switch (item.getItemId()) {
             case R.id.menu_notes:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.frameLayout, notesFragment)
-                        .commit();
-                return true;
-
+                fragment = new NotesFragment();
+                break;
             case R.id.menu_shared:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.frameLayout, sharedFragment)
-                        .commit();
-                return true;
-
+                fragment = new SharedFragment();
+                break;
             case R.id.menu_trash:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.frameLayout, trashFragment)
-                        .commit();
-                return true;
+                fragment = new TrashFragment();
+                break;
+            default:
+                return false;
         }
-        return false;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayout, fragment)
+                .commit();
+        return true;
     }
 }

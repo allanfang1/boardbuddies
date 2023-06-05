@@ -19,8 +19,6 @@ import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link NotesFragment newInstance} factory method to
- * create an instance of this fragment.
  *
  */
 public class NotesFragment extends Fragment {
@@ -35,16 +33,17 @@ public class NotesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         if (bundle != null) {
             notes = (ArrayList<Note>)bundle.getSerializable("myNotes");
             // Handle the retrieved data as needed
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
         recyclerView = view.findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -53,6 +52,7 @@ public class NotesFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
+
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState){
         addNoteFab = view.findViewById(R.id.add_note_fab);
