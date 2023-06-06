@@ -25,16 +25,19 @@
 
     <!-- RecyclerView to contain repeating elements -->
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainTitle">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mainTitle"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
 
-    </FrameLayout>
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph" />
+
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_notes"
+        android:id="@+id/notesFragment"
         android:icon="@drawable/baseline_article_24"
         android:title="Notes" />
     <item
-        android:id="@+id/menu_shared"
+        android:id="@+id/sharedFragment"
         android:icon="@drawable/baseline_assignment_ind_24"
         android:title="Shared" />
     <item
-        android:id="@+id/menu_trash"
+        android:id="@+id/trashFragment"
         android:icon="@drawable/baseline_recycling_24"
         android:title="Trash" />
 </menu>
