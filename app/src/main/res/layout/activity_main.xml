@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="#F5F5F5"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
     </androidx.appcompat.widget.Toolbar>
