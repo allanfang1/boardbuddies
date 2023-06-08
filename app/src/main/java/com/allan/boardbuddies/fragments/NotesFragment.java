@@ -1,5 +1,6 @@
 package com.allan.boardbuddies.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.allan.boardbuddies.EditActivity;
 import com.allan.boardbuddies.Note;
 import com.allan.boardbuddies.NoteAdapter;
 import com.allan.boardbuddies.R;
@@ -59,8 +61,10 @@ public class NotesFragment extends Fragment {
         addNoteFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notes.add(new Note("yay", "bob"));
-                adapter.notifyDataSetChanged();
+//                notes.add(new Note("yay", "bob"));
+//                adapter.notifyDataSetChanged();
+                Intent intent = new Intent(view.getContext(), EditActivity.class);
+                view.getContext().startActivity(intent);
             }
         });
     }
