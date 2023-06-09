@@ -17,9 +17,9 @@ public class EditActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.mainToolbar);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        ScrollView scrollView = findViewById(R.id.noteScrollview);
+        View extraView = findViewById(R.id.remainingScrollSpace);
         EditText editTextNoteContent = findViewById(R.id.editTextNoteContent);
-        scrollView.setOnClickListener(v -> editTextNoteContent.requestFocus());
+        extraView.setOnClickListener(v -> editTextNoteContent.requestFocus());
 
     }
 }

@@ -67,8 +67,15 @@
                 android:ems="10"
                 android:gravity="top"
                 android:hint="Content"
+                android:background="@android:color/transparent"
                 android:inputType="textMultiLine"
                 android:padding="16dp" />
+
+            <View
+                android:id="@+id/remainingScrollSpace"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
         </LinearLayout>
     </ScrollView>
 
