@@ -7,7 +7,7 @@
     tools:context=".EditActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/mainToolbar"
+        android:id="@+id/edit_note_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:theme="@style/Widget.Boardbuddies.Toolbar"
@@ -35,7 +35,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/mainToolbar"
+        app:layout_constraintTop_toBottomOf="@id/edit_note_toolbar"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -46,7 +46,7 @@
             android:orientation="vertical" >
 
             <EditText
-                android:id="@+id/editTextNoteTitle"
+                android:id="@+id/edit_textnote_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
@@ -55,13 +55,13 @@
                 android:hint="Title"
                 android:background="@android:color/transparent"
                 android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
             <EditText
-                android:id="@+id/editTextNoteContent"
+                android:id="@+id/edit_textnote_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -72,7 +72,7 @@
                 android:padding="16dp" />
 
             <View
-                android:id="@+id/remainingScrollSpace"
+                android:id="@+id/extra_scrollspace"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
