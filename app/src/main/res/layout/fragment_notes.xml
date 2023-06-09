@@ -10,7 +10,7 @@
         android:id="@+id/main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F5F5" />
+        android:theme="@style/Theme.Boardbuddies" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_note_fab"
@@ -19,6 +19,7 @@
         android:layout_gravity="end|bottom"
         android:src="@drawable/baseline_post_add_24"
         android:contentDescription="@string/submit"
-        android:layout_margin="20dp" />
+        android:layout_margin="20dp"
+        android:theme="@style/Theme.Boardbuddies"/>
 
 </FrameLayout>
