@@ -3,6 +3,9 @@ package com.allan.boardbuddies;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -13,11 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationBarView
-        .OnItemSelectedListener {
-
-    BottomNavigationView bottomNavigationView;
+public class MainActivity extends AppCompatActivity{
 
     /** On activity creation
     * Param passes data between states of activity (e.g. orientation change/running in background)
@@ -28,31 +27,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.menu_notes);
-    }
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment fragment;
-        switch (item.getItemId()) {
-            case R.id.menu_notes:
-                fragment = new NotesFragment();
-                break;
-            case R.id.menu_shared:
-                fragment = new SharedFragment();
-                break;
-            case R.id.menu_trash:
-                fragment = new TrashFragment();
-                break;
-            default:
-                return false;
-        }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frameLayout, fragment)
-                .commit();
-        return true;
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
 }
