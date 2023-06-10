@@ -3,6 +3,7 @@ package com.allan.boardbuddies.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,9 +53,12 @@ public class NotesFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
         recyclerView = view.findViewById(R.id.main_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        recyclerView.setLayoutManager(layoutManager);
         adapter = new NoteAdapter(notes);
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation()));
         // Inflate the layout for this fragment
         return view;
     }
