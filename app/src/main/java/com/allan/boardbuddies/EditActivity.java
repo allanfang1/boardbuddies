@@ -2,6 +2,8 @@ package com.allan.boardbuddies;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +14,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class EditActivity extends AppCompatActivity {
+    private EditText editTextTitle;
+    private EditText editTextContent;
+    private Bundle extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,21 +24,31 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         Toolbar toolbar = findViewById(R.id.edit_note_toolbar);
         toolbar.setNavigationOnClickListener(v -> {
-            saveTextNote();
+            //if there no extras or the extras are changed, saveTextNote()
+            // delete old text note only if there are extra and extras are changed
+            if (extras == null){
+                saveTextNote();
+            } else if (!extras.getString("TITLE").equals(editTextTitle.getText().toString()) || !extras.getString("CONTENT").equals(editTextContent.getText().toString())) {
+                saveTextNote();
+                getApplicationContext().deleteFile(extras.getString("NAME"));
+            }
             onBackPressed();
         });
 
         View extraView = findViewById(R.id.extra_scrollspace);
-        EditText editTextNoteContent = findViewById(R.id.edit_textnote_content);
-        extraView.setOnClickListener(v -> editTextNoteContent.requestFocus());
-
+        editTextTitle = findViewById(R.id.edit_textnote_title);
+        editTextContent = findViewById(R.id.edit_textnote_content);
+        extras = getIntent().getExtras();
+        if (extras != null){
+            editTextTitle.setText(extras.getString("TITLE"));
+            editTextContent.setText(extras.getString("CONTENT"));
+        }
+        extraView.setOnClickListener(v -> editTextContent.requestFocus());
     }
 
     private void saveTextNote(){
-        EditText editText1 = findViewById(R.id.edit_textnote_title);
-        EditText editText2 = findViewById(R.id.edit_textnote_content);
-        String title = editText1.getText().toString();
-        String content = editText2.getText().toString();
+        String title = editTextTitle.getText().toString();
+        String content = editTextContent.getText().toString();
         if (!title.trim().isEmpty() || !content.trim().isEmpty()){
             String fileName = System.currentTimeMillis() + ".json";
             try {

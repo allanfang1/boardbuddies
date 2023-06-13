@@ -25,8 +25,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
-public class NotesFragment extends Fragment {
+public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListener {
     private ArrayList<Note> notes = new ArrayList<Note>();
     private RecyclerView recyclerView;
     private FloatingActionButton addNoteFab;
@@ -41,10 +43,10 @@ public class NotesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         loadNotes();
-        if (bundle != null) {
-            notes = (ArrayList<Note>)bundle.getSerializable("myNotes");
-            // Handle the retrieved data as needed
-        }
+//        if (bundle != null) {
+//            notes = (ArrayList<Note>)bundle.getSerializable("myNotes");
+//            // Handle the retrieved data as needed
+//        }
     }
 
     @Override
@@ -55,7 +57,7 @@ public class NotesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new NoteAdapter(notes);
+        adapter = new NoteAdapter(notes, this);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation()));
@@ -84,8 +86,18 @@ public class NotesFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    public void onNoteClick(int position){
+        Intent intent = new Intent(requireContext(), EditActivity.class);
+        intent.putExtra("TITLE", notes.get(position).getTitle());
+        intent.putExtra("CONTENT", notes.get(position).getContent());
+        intent.putExtra("NAME", notes.get(position).getName());
+        requireContext().startActivity(intent);
+        //
+    }
+
     private void loadNotes(){
-        File[] files = requireContext().getFilesDir().listFiles();
+        File[] files = getActivity().getApplicationContext().getFilesDir().listFiles();
+        Arrays.sort(files, Comparator.comparing(File::getName).reversed());
         notes.clear();
         for (File file : files){
             if (file.isFile() && file.getName().endsWith(".json")) {
@@ -104,7 +116,7 @@ public class NotesFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(jsonContent);
 
                     // Add the parsed JSON content to the list
-                    notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content")));
+                    notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
