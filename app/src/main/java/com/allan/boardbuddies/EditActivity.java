@@ -57,7 +57,7 @@ public class EditActivity extends AppCompatActivity {
                 jsonObject.put("content", content);
                 String jsonString = jsonObject.toString();
 
-                File file = new File(getFilesDir(), fileName);
+                File file = new File(getApplicationContext().getFilesDir(), fileName);
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(jsonString);
                 fileWriter.close();
