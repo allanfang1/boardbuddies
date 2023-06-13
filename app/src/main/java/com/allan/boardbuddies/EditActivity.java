@@ -3,9 +3,11 @@ package com.allan.boardbuddies;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +45,12 @@ public class EditActivity extends AppCompatActivity {
             editTextTitle.setText(extras.getString("TITLE"));
             editTextContent.setText(extras.getString("CONTENT"));
         }
-        extraView.setOnClickListener(v -> editTextContent.requestFocus());
+        extraView.setOnClickListener(v -> {
+            editTextContent.requestFocus();
+            editTextContent.setSelection(editTextContent.getText().length());
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editTextContent, InputMethodManager.SHOW_IMPLICIT);
+        });
     }
 
     private void saveTextNote(){
