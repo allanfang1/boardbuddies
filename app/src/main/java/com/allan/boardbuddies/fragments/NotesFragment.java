@@ -90,9 +90,8 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         Intent intent = new Intent(requireContext(), EditActivity.class);
         intent.putExtra("TITLE", notes.get(position).getTitle());
         intent.putExtra("CONTENT", notes.get(position).getContent());
-        intent.putExtra("NAME", notes.get(position).getName());
+        intent.putExtra("FILENAME", notes.get(position).getName());
         requireContext().startActivity(intent);
-        //
     }
 
     private void loadNotes(){

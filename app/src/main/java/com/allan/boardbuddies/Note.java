@@ -4,12 +4,12 @@ package com.allan.boardbuddies;
 public class Note {
     private String title;
     private String content;
-    private String name;
+    private String filename;
 
-    public Note(String title, String content, String name){
+    public Note(String title, String content, String filename){
         this.title = title;
         this.content = content;
-        this.name = name;
+        this.filename = filename;
     }
 
     public String getTitle(){
@@ -19,7 +19,7 @@ public class Note {
         return this.content;
     }
     public String getName(){
-        return this.name;
+        return this.filename;
     }
 
 }

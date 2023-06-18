@@ -18,7 +18,9 @@ import java.io.IOException;
 public class EditActivity extends AppCompatActivity {
     private EditText editTextTitle;
     private EditText editTextContent;
-    private Bundle extras;
+    private String localFilename;
+    private String localTitle;
+    private String localContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +28,11 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         Toolbar toolbar = findViewById(R.id.edit_note_toolbar);
         toolbar.setNavigationOnClickListener(v -> {
-            //if there no extras or the extras are changed, saveTextNote()
-            // delete old text note only if there are extra and extras are changed
-            if (extras == null){
+            if (localFilename == null){ //if there is no local file: saveTextNote()
                 saveTextNote();
-            } else if (!extras.getString("TITLE").equals(editTextTitle.getText().toString()) || !extras.getString("CONTENT").equals(editTextContent.getText().toString())) {
+            } else if (!localTitle.equals(editTextTitle.getText().toString()) || !localContent.equals(editTextContent.getText().toString())) { //if local file has been changed
                 saveTextNote();
-                getApplicationContext().deleteFile(extras.getString("NAME"));
+                getApplicationContext().deleteFile(localFilename);
             }
             onBackPressed();
         });
@@ -40,10 +40,13 @@ public class EditActivity extends AppCompatActivity {
         View extraView = findViewById(R.id.extra_scrollspace);
         editTextTitle = findViewById(R.id.edit_textnote_title);
         editTextContent = findViewById(R.id.edit_textnote_content);
-        extras = getIntent().getExtras();
-        if (extras != null){
-            editTextTitle.setText(extras.getString("TITLE"));
-            editTextContent.setText(extras.getString("CONTENT"));
+
+        if (getIntent().getExtras() != null){
+            localFilename = getIntent().getExtras().getString("FILENAME");
+            localTitle = getIntent().getExtras().getString("TITLE");
+            localContent = getIntent().getExtras().getString("CONTENT");
+            editTextTitle.setText(localTitle);
+            editTextContent.setText(localContent);
         }
         extraView.setOnClickListener(v -> {
             editTextContent.requestFocus();
