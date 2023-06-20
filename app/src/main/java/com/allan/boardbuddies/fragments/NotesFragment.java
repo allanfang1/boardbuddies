@@ -29,9 +29,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListener {
-    private ArrayList<Note> notes = new ArrayList<Note>();
-    private RecyclerView recyclerView;
-    private FloatingActionButton addNoteFab;
+    private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
 
     public NotesFragment() {
@@ -41,12 +39,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
         loadNotes();
-//        if (bundle != null) {
-//            notes = (ArrayList<Note>)bundle.getSerializable("myNotes");
-//            // Handle the retrieved data as needed
-//        }
     }
 
     @Override
@@ -54,7 +47,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
-        recyclerView = view.findViewById(R.id.main_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new NoteAdapter(notes, this);
@@ -67,15 +60,10 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
 
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState){
-        addNoteFab = view.findViewById(R.id.add_note_fab);
-        addNoteFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                notes.add(new Note("yay", "bob"));
-//                adapter.notifyDataSetChanged();
-                Intent intent = new Intent(view.getContext(), EditActivity.class);
-                view.getContext().startActivity(intent);
-            }
+        FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
+        addNoteFab.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), EditActivity.class);
+            v.getContext().startActivity(intent);
         });
     }
 
@@ -96,28 +84,30 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
 
     private void loadNotes(){
         File[] files = getActivity().getApplicationContext().getFilesDir().listFiles();
-        Arrays.sort(files, Comparator.comparing(File::getName).reversed());
         notes.clear();
-        for (File file : files){
-            if (file.isFile() && file.getName().endsWith(".json")) {
-                try {
-                    // Read the file contents
-                    BufferedReader reader = new BufferedReader(new FileReader(file));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        stringBuilder.append(line);
+        if (files != null) {
+            Arrays.sort(files, Comparator.comparing(File::getName).reversed());
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".json")) {
+                    try {
+                        // Read the file contents
+                        BufferedReader reader = new BufferedReader(new FileReader(file));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            stringBuilder.append(line);
+                        }
+                        reader.close();
+
+                        // Parse the JSON content
+                        String jsonContent = stringBuilder.toString();
+                        JSONObject jsonObject = new JSONObject(jsonContent);
+
+                        // Add the parsed JSON content to the list
+                        notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
                     }
-                    reader.close();
-
-                    // Parse the JSON content
-                    String jsonContent = stringBuilder.toString();
-                    JSONObject jsonObject = new JSONObject(jsonContent);
-
-                    // Add the parsed JSON content to the list
-                    notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
                 }
             }
         }

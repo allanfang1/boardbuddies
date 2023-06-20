@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import com.allan.boardbuddies.fragments.NotesFragment;
-
 // binds data to views displayed by RecyclerView
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
     private ArrayList<Note> notes;
@@ -43,20 +41,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     }
 
     // Allows access to each list item view without needing to lookup every time
-    public static class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class NoteViewHolder extends RecyclerView.ViewHolder{
         TextView titleTextView;
-        OnNoteListener onNoteListener;
 
-        public NoteViewHolder(View itemView, OnNoteListener onNoteListener){
+        public NoteViewHolder(View itemView, OnNoteListener onNoteListener) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.note_title_text);
-            itemView.setOnClickListener(this);
-            this.onNoteListener = onNoteListener;
-        }
-
-        @Override
-        public void onClick(View v){
-            this.onNoteListener.onNoteClick(getBindingAdapterPosition());
+            itemView.setOnClickListener(view -> onNoteListener.onNoteClick(getBindingAdapterPosition()));
         }
     }
 
