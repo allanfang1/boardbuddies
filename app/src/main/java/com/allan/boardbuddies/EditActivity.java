@@ -21,6 +21,7 @@ public class EditActivity extends AppCompatActivity {
     private String localFilename;
     private String localTitle;
     private String localContent;
+    private int localPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +29,16 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         Toolbar toolbar = findViewById(R.id.edit_note_toolbar);
         toolbar.setNavigationOnClickListener(v -> {
+            Intent resultIntent = new Intent();
             if (localFilename == null){ //if there is no local file: saveTextNote()
-                saveTextNote();
+                resultIntent.putExtra("addedFilename", saveTextNote());
             } else if (!localTitle.equals(editTextTitle.getText().toString()) || !localContent.equals(editTextContent.getText().toString())) { //if local file has been changed
-                saveTextNote();
+                resultIntent.putExtra("addedFilename", saveTextNote());
+                resultIntent.putExtra("deletedPosition", localPosition);
                 getApplicationContext().deleteFile(localFilename);
             }
-            onBackPressed();
+            setResult(RESULT_OK, resultIntent);
+            finish();
         });
 
         View extraView = findViewById(R.id.extra_scrollspace);
@@ -45,6 +49,7 @@ public class EditActivity extends AppCompatActivity {
             localFilename = getIntent().getExtras().getString("FILENAME");
             localTitle = getIntent().getExtras().getString("TITLE");
             localContent = getIntent().getExtras().getString("CONTENT");
+            localPosition = getIntent().getExtras().getInt("POSITION");
             editTextTitle.setText(localTitle);
             editTextContent.setText(localContent);
         }
@@ -56,7 +61,7 @@ public class EditActivity extends AppCompatActivity {
         });
     }
 
-    private void saveTextNote(){
+    private String saveTextNote(){
         String title = editTextTitle.getText().toString();
         String content = editTextContent.getText().toString();
         if (!title.trim().isEmpty() || !content.trim().isEmpty()){
@@ -71,10 +76,11 @@ public class EditActivity extends AppCompatActivity {
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(jsonString);
                 fileWriter.close();
+                return fileName;
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
-
 }

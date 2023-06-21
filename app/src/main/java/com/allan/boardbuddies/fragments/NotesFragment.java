@@ -1,7 +1,14 @@
 package com.allan.boardbuddies.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,23 +70,57 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EditActivity.class);
-            v.getContext().startActivity(intent);
+            mNoteLauncher.launch(intent);
         });
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        loadNotes();
-        adapter.notifyDataSetChanged();
-    }
+    
+    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        String addedFilename = data.getStringExtra("addedFilename");
+                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
+                        if (addedFilename != null){
+                            loadSingle(addedFilename, 0);
+                            adapter.notifyItemInserted(0);
+                        }
+                        if (deletedPosition != -1){
+                            notes.remove(deletedPosition);
+                            adapter.notifyItemRemoved(deletedPosition+1);
+                        }
+                    }
+                }
+            });
 
     public void onNoteClick(int position){
         Intent intent = new Intent(requireContext(), EditActivity.class);
         intent.putExtra("TITLE", notes.get(position).getTitle());
         intent.putExtra("CONTENT", notes.get(position).getContent());
         intent.putExtra("FILENAME", notes.get(position).getName());
-        requireContext().startActivity(intent);
+        intent.putExtra("POSITION", position);
+        mNoteLauncher.launch(intent);
+    }
+
+    private void loadSingle(String filename, int position){
+        File file = new File(getActivity().getApplicationContext().getFilesDir(), filename);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            reader.close();
+
+            String jsonContent = stringBuilder.toString();
+            JSONObject jsonObject = new JSONObject(jsonContent);
+
+            notes.add(position, new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadNotes(){
