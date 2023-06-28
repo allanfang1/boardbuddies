@@ -38,9 +38,27 @@ import java.util.Comparator;
 public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListener {
     private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
+    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        String addedFilename = data.getStringExtra("addedFilename");
+                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
+                        if (deletedPosition != -1){
+                            notes.remove(deletedPosition);
+                            adapter.notifyItemRemoved(deletedPosition);
+                        }
+                        if (addedFilename != null) {
+                            loadSingle(addedFilename, 0);
+                            adapter.notifyItemInserted(0);
+                        }
+                    }
+                }
+            });
 
-    public NotesFragment() {
-        // Required empty public constructor
+    public NotesFragment() {        // Required empty public constructor
     }
 
     @Override
@@ -73,26 +91,6 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
             mNoteLauncher.launch(intent);
         });
     }
-    
-    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        String addedFilename = data.getStringExtra("addedFilename");
-                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
-                        if (addedFilename != null){
-                            loadSingle(addedFilename, 0);
-                            adapter.notifyItemInserted(0);
-                        }
-                        if (deletedPosition != -1){
-                            notes.remove(deletedPosition);
-                            adapter.notifyItemRemoved(deletedPosition+1);
-                        }
-                    }
-                }
-            });
 
     public void onNoteClick(int position){
         Intent intent = new Intent(requireContext(), EditActivity.class);
@@ -105,20 +103,11 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
 
     private void loadSingle(String filename, int position){
         File file = new File(getActivity().getApplicationContext().getFilesDir(), filename);
+        String fileString = getFileString(file);
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            reader.close();
-
-            String jsonContent = stringBuilder.toString();
-            JSONObject jsonObject = new JSONObject(jsonContent);
-
+            JSONObject jsonObject = new JSONObject(fileString);
             notes.add(position, new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -130,27 +119,31 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
             Arrays.sort(files, Comparator.comparing(File::getName).reversed());
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".json")) {
+                    String fileString = getFileString(file);
                     try {
-                        // Read the file contents
-                        BufferedReader reader = new BufferedReader(new FileReader(file));
-                        StringBuilder stringBuilder = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            stringBuilder.append(line);
-                        }
-                        reader.close();
-
-                        // Parse the JSON content
-                        String jsonContent = stringBuilder.toString();
-                        JSONObject jsonObject = new JSONObject(jsonContent);
-
-                        // Add the parsed JSON content to the list
+                        JSONObject jsonObject = new JSONObject(fileString);
                         notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-                    } catch (IOException | JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
+        }
+    }
+
+    private String getFileString(File file){
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            reader.close();
+            return stringBuilder.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
