@@ -18,6 +18,7 @@ import java.io.IOException;
 public class EditActivity extends AppCompatActivity {
     private EditText editTextTitle;
     private EditText editTextContent;
+    private File filePath;
     private String localFilename;
     private String localTitle;
     private String localContent;
@@ -46,6 +47,7 @@ public class EditActivity extends AppCompatActivity {
         editTextContent = findViewById(R.id.edit_textnote_content);
 
         if (getIntent().getExtras() != null){
+            filePath = (File)getIntent().getExtras().get("FILEPATH");
             localFilename = getIntent().getExtras().getString("FILENAME");
             localTitle = getIntent().getExtras().getString("TITLE");
             localContent = getIntent().getExtras().getString("CONTENT");
@@ -72,7 +74,7 @@ public class EditActivity extends AppCompatActivity {
                 jsonObject.put("content", content);
                 String jsonString = jsonObject.toString();
 
-                File file = new File(getApplicationContext().getFilesDir(), fileName);
+                File file = new File(filePath, fileName);
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(jsonString);
                 fileWriter.close();
