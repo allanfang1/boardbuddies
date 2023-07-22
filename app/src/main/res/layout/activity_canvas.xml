@@ -7,7 +7,7 @@
     tools:context=".activities.EditActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/edit_note_toolbar"
+        android:id="@+id/edit_canvas_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Widget.Boardbuddies.Toolbar"
@@ -29,55 +29,15 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
-        android:id="@+id/noteScrollview"
+    <com.allan.boardbuddies.views.CanvasView
+        android:id="@+id/canvas_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/edit_note_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/edit_canvas_toolbar"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-            <EditText
-                android:id="@+id/edit_textnote_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:ems="10"
-                android:inputType="textMultiLine"
-                android:hint="Title"
-                android:background="@android:color/transparent"
-                android:paddingTop="16dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <EditText
-                android:id="@+id/edit_textnote_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="top"
-                android:hint="Content"
-                android:background="@android:color/transparent"
-                android:inputType="textMultiLine"
-                android:padding="16dp" />
-
-            <View
-                android:id="@+id/extra_scrollspace"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:theme="@style/Theme.Boardbuddies"

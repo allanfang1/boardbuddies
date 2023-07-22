@@ -1,4 +1,4 @@
-package com.allan.boardbuddies;
+package com.allan.boardbuddies.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import com.allan.boardbuddies.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;

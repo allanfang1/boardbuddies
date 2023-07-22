@@ -1,4 +1,4 @@
-package com.allan.boardbuddies;
+package com.allan.boardbuddies.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.fragments.NotesFragment;
 import com.allan.boardbuddies.fragments.SharedFragment;
 import com.allan.boardbuddies.fragments.TrashFragment;

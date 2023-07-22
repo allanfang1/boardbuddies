@@ -1,4 +1,4 @@
-package com.allan.boardbuddies;
+package com.allan.boardbuddies.models;
 
 // defining a Note
 public class Note {

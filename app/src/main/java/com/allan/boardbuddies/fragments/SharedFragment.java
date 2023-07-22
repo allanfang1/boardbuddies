@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,8 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.allan.boardbuddies.EditActivity;
-import com.allan.boardbuddies.Note;
+import com.allan.boardbuddies.activities.CanvasActivity;
+import com.allan.boardbuddies.activities.EditActivity;
+import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.NoteAdapter;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -94,8 +94,7 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), EditActivity.class);
-            intent.putExtra("FILEPATH", directory);
+            Intent intent = new Intent(v.getContext(), CanvasActivity.class);
             mNoteLauncher.launch(intent);
         });
     }
