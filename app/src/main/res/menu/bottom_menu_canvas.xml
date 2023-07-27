@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/add_text"
+        android:icon="@drawable/baseline_article_24"
+        android:title="Text" />
+    <item
+        android:id="@+id/sharedFragment"
+        android:icon="@drawable/baseline_assignment_ind_24"
+        android:title="Shared" />
+    <item
+        android:id="@+id/trashFragment"
+        android:icon="@drawable/baseline_recycling_24"
+        android:title="Trash" />
+</menu>

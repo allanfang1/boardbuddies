@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BoardBuddies</string>
     <string name="submit">Submit</string>
+    <string name="done">Done</string>
 </resources>

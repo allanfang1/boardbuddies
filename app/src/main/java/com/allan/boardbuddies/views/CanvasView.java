@@ -6,11 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.allan.boardbuddies.models.Stroke;
+import com.allan.boardbuddies.models.TextBox;
 
 import java.util.ArrayList;
 
@@ -21,7 +24,9 @@ public class CanvasView extends View{
     private Bitmap bitmap;
     private Canvas canvas;
     private ArrayList<Stroke> paths = new ArrayList<>();
+    private ArrayList<TextBox> texts = new ArrayList<>();
     private float currX, currY;
+    private TextBox selectedBox;
     private Path path;
     private int strokeColor;
     private int strokeWidth;
@@ -31,10 +36,10 @@ public class CanvasView extends View{
 
         paint.setAntiAlias(true);
         paint.setDither(true);
-        paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAlpha(0xff);
+        paint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void init(int width, int height) {
@@ -48,13 +53,20 @@ public class CanvasView extends View{
     protected void onDraw(Canvas canvas){
         canvas.save();
         canvas.drawColor(Color.WHITE);
+        paint.setStyle(Paint.Style.STROKE);
         for (Stroke stroke : paths) {
             paint.setColor(stroke.getColor());
             paint.setStrokeWidth(stroke.getWidth());
             canvas.drawPath(stroke.getPath(), paint);
         }
-
+        paint.setStyle(Paint.Style.FILL);
+        for (TextBox textBox : texts) {
+            paint.setTextSize(textBox.getTextSize()); // Set the text size for each item
+            paint.setColor(textBox.getColor());
+            canvas.drawText(textBox.getText(), textBox.getX(), textBox.getY(), paint);
+        }
         canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
+
         canvas.restore();
     }
 
@@ -65,12 +77,27 @@ public class CanvasView extends View{
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                touchDown(x, y);
+                TextBox foundBox = findTextBox(x, y);
+                if (foundBox != null){
+                    System.out.println("yipee!");
+                    selectedBox = foundBox;
+                } else {
+                    touchDown(x, y);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
-                touchMove(x, y);
+                if (selectedBox != null){
+                    touchMoveText(x,y);
+                } else {
+                    touchMove(x, y);
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                if (selectedBox != null){
+                    selectedBox = null;
+                } else {
+                    touchUp();
+                }
                 break;
         }
         return true;
@@ -97,4 +124,47 @@ public class CanvasView extends View{
             currY = y;
         }
     }
+
+    private void touchUp(){
+        path.lineTo(currX, currY);
+        invalidate();
+    }
+
+    private void touchMoveText(float x, float y){
+        selectedBox.setX(x);
+        selectedBox.setY(y);
+        invalidate();
+    }
+
+    public void newTextBox(String text){
+        int xPos = (canvas.getWidth() / 2);
+        int yPos = (canvas.getHeight() / 2) ;
+        TextBox textBox = new TextBox(xPos, yPos, text, 75, Color.BLUE);
+        texts.add(textBox);
+        invalidate();
+    }
+
+    private TextBox findTextBox(float x, float y) {
+        Rect textBounds = new Rect();
+        RectF textBoundsF;
+        paint.setStyle(Paint.Style.FILL);
+        for (TextBox i : texts){
+            paint.setTextSize(i.getTextSize());
+            paint.getTextBounds(i.getText(), 0, i.getText().length(), textBounds);
+            textBoundsF = new RectF(textBounds);
+            textBoundsF.offset(i.getX(), i.getY());
+            System.out.println(textBoundsF);
+            System.out.println(x);
+            System.out.println(y);
+            if (textBoundsF.contains(x, y)){
+                return i;
+            }
+        }
+        return null;
+    }
+
+//    private rectF setBounds(){
+//
+//    }
+
 }
