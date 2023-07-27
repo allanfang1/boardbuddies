@@ -25,7 +25,7 @@ public class CanvasView extends View{
     private Canvas canvas;
     private ArrayList<Stroke> paths = new ArrayList<>();
     private ArrayList<TextBox> texts = new ArrayList<>();
-    private float currX, currY;
+    private float currX, currY, offsetX, offsetY;
     private TextBox selectedBox;
     private Path path;
     private int strokeColor;
@@ -39,7 +39,7 @@ public class CanvasView extends View{
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAlpha(0xff);
-        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void init(int width, int height) {
@@ -63,6 +63,10 @@ public class CanvasView extends View{
         for (TextBox textBox : texts) {
             paint.setTextSize(textBox.getTextSize()); // Set the text size for each item
             paint.setColor(textBox.getColor());
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(1);
+            canvas.drawRect(getBoundsF(textBox), paint);
+            paint.setStyle(Paint.Style.FILL);
             canvas.drawText(textBox.getText(), textBox.getX(), textBox.getY(), paint);
         }
         canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
@@ -77,9 +81,8 @@ public class CanvasView extends View{
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                TextBox foundBox = findTextBox(x, y);
+                TextBox foundBox = findPressTextBox(x, y);
                 if (foundBox != null){
-                    System.out.println("yipee!");
                     selectedBox = foundBox;
                 } else {
                     touchDown(x, y);
@@ -131,40 +134,39 @@ public class CanvasView extends View{
     }
 
     private void touchMoveText(float x, float y){
-        selectedBox.setX(x);
-        selectedBox.setY(y);
+        selectedBox.setX(x - offsetX);
+        selectedBox.setY(y + offsetY);
         invalidate();
     }
 
     public void newTextBox(String text){
-        int xPos = (canvas.getWidth() / 2);
-        int yPos = (canvas.getHeight() / 2) ;
-        TextBox textBox = new TextBox(xPos, yPos, text, 75, Color.BLUE);
+        TextBox textBox = new TextBox(0, canvas.getHeight() / 2, text, 75, Color.BLUE);
+        textBox.setX((canvas.getWidth() - getBoundsF(textBox).width()) / 2);
         texts.add(textBox);
         invalidate();
     }
 
-    private TextBox findTextBox(float x, float y) {
-        Rect textBounds = new Rect();
+    private TextBox findPressTextBox(float x, float y) {
         RectF textBoundsF;
         paint.setStyle(Paint.Style.FILL);
         for (TextBox i : texts){
-            paint.setTextSize(i.getTextSize());
-            paint.getTextBounds(i.getText(), 0, i.getText().length(), textBounds);
-            textBoundsF = new RectF(textBounds);
-            textBoundsF.offset(i.getX(), i.getY());
-            System.out.println(textBoundsF);
-            System.out.println(x);
-            System.out.println(y);
+            textBoundsF = getBoundsF(i);
             if (textBoundsF.contains(x, y)){
+                offsetX = x - i.getX();
+                offsetY = i.getY() - y;
                 return i;
             }
         }
         return null;
     }
 
-//    private rectF setBounds(){
-//
-//    }
+    private RectF getBoundsF(TextBox in){
+        Rect textBounds = new Rect();
+        paint.setTextSize(in.getTextSize());
+        paint.getTextBounds(in.getText(), 0, in.getText().length(), textBounds);
+        RectF textBoundsF = new RectF(textBounds);
+        textBoundsF.offset(in.getX(), in.getY());
+        return textBoundsF;
+    }
 
 }
