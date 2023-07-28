@@ -10,7 +10,7 @@
         android:icon="@drawable/baseline_assignment_ind_24"
         android:title="Shared" />
     <item
-        android:id="@+id/edit_canvas_title"
-        android:icon="@drawable/baseline_title_24"
-        android:title="Title" />
+        android:id="@+id/trashFragment"
+        android:icon="@drawable/baseline_recycling_24"
+        android:title="Trash" />
 </menu>

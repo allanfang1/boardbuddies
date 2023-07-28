@@ -19,7 +19,7 @@
         app:titleMarginStart="0dp">
 
         <TextView
-            android:id="@+id/canvas_title"
+            android:id="@+id/custom_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="placeholder"
