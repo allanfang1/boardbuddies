@@ -23,7 +23,7 @@ public class CanvasView extends View{
     private Paint bitmapPaint = new Paint(Paint.DITHER_FLAG);
     private Bitmap bitmap;
     private Canvas canvas;
-    private ArrayList<Stroke> paths = new ArrayList<>();
+    private ArrayList<Stroke> strokes = new ArrayList<>();
     private ArrayList<TextBox> texts = new ArrayList<>();
     private float currX, currY, offsetX, offsetY;
     private TextBox selectedBox;
@@ -54,7 +54,7 @@ public class CanvasView extends View{
         canvas.save();
         canvas.drawColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
-        for (Stroke stroke : paths) {
+        for (Stroke stroke : strokes) {
             paint.setColor(stroke.getColor());
             paint.setStrokeWidth(stroke.getWidth());
             canvas.drawPath(stroke.getPath(), paint);
@@ -109,7 +109,7 @@ public class CanvasView extends View{
     private void touchDown(float x, float y) {
         path = new Path();
         Stroke stroke = new Stroke(strokeColor, strokeWidth, path);
-        paths.add(stroke);
+        strokes.add(stroke);
         path.moveTo(x, y);
         invalidate();
         currX = x;
@@ -169,4 +169,12 @@ public class CanvasView extends View{
         return textBoundsF;
     }
 
+    public ArrayList<Stroke> getStrokes(){
+        return strokes;
+    }
+
+    public ArrayList<TextBox> getTextBoxes(){
+        return texts;
+    }
 }
+

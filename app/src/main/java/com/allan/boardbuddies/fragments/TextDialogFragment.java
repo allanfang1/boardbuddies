@@ -26,13 +26,12 @@ public class TextDialogFragment extends DialogFragment {
 
     private EditText editText;
 
-    public static TextDialogFragment newInstance(String in) {
+    public static TextDialogFragment newInstance(String in, String resultKey) {
         TextDialogFragment f = new TextDialogFragment();
-
         Bundle args = new Bundle();
         args.putString("text", in);
+        args.putString("resultKey", resultKey);
         f.setArguments(args);
-
         return f;
     }
 
@@ -64,6 +63,7 @@ public class TextDialogFragment extends DialogFragment {
         button.setOnClickListener(v -> {
             Bundle result = new Bundle();
             result.putString("bundleKey", String.valueOf(editText.getText()));
+            result.putString("resultKey", getArguments().getString("resultKey"));
             getParentFragmentManager().setFragmentResult("requestKey", result);
             dismiss();
         });

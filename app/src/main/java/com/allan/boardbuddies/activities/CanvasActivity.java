@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
         Toolbar toolbar = findViewById(R.id.edit_canvas_toolbar);
+        TextView canvasTitle = findViewById(R.id.canvas_title);
 
         paint = findViewById(R.id.canvas_view);
         ViewTreeObserver viewTreeObserver = paint.getViewTreeObserver();
@@ -64,9 +66,12 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 String result = bundle.getString("bundleKey");
-                System.out.println(result);
-                paint.newTextBox(result);
-                // Do something with the result.
+                String resultKey = bundle.getString("resultKey");
+                if ("add_text".equals(resultKey)){
+                    paint.newTextBox(result);
+                } else if ("edit_canvas_title".equals(resultKey)){
+                    canvasTitle.setText(result);
+                }
             }
         });
 
@@ -122,7 +127,10 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.add_text:
-                showDialog();
+                showDialog("add_text");
+                break;
+            case R.id.edit_canvas_title:
+                showDialog("edit_canvas_title");
                 break;
             default:
                 return false;
@@ -130,7 +138,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         return true;
     }
 
-    private void showDialog() {
+    private void showDialog(String resultKey) {
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
@@ -140,9 +148,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-
-        // Create and show the dialog.
-        DialogFragment newFragment = TextDialogFragment.newInstance("testing");
+        DialogFragment newFragment = TextDialogFragment.newInstance("testing", resultKey);
         newFragment.show(ft, "dialog");
     }
 }
