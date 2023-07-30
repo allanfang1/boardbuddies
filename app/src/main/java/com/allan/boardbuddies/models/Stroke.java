@@ -2,12 +2,15 @@ package com.allan.boardbuddies.models;
 
 import android.graphics.Path;
 
+import androidx.annotation.ColorInt;
+
 public class Stroke {
+    @ColorInt
     private int color;
     private int width;
     private Path path;
 
-    public Stroke(int color, int width, Path path){
+    public Stroke(@ColorInt int color, int width, Path path){
         this.color = color;
         this.width = width;
         this.path = path;
