@@ -64,7 +64,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 String result = bundle.getString("bundleKey");
                 System.out.println(result);
-                paint.newTextBox(result);
+                canvasView.newTextBox(result);
                 // Do something with the result.
             }
         });
