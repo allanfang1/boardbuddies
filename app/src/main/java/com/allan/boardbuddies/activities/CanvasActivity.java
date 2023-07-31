@@ -150,7 +150,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         }
         ft.addToBackStack(null);
 
-        DialogFragment newFragment = TextDialogFragment.newInstance("");
+        DialogFragment newFragment = TextDialogFragment.newInstance("", resultKey);
         newFragment.show(ft, "dialog");
     }
 }
