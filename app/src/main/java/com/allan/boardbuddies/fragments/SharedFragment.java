@@ -40,7 +40,7 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
     private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
     private File directory;
-    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
@@ -92,7 +92,7 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), CanvasActivity.class);
-            mNoteLauncher.launch(intent);
+            resultLauncher.launch(intent);
         });
     }
 
@@ -103,7 +103,7 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
         intent.putExtra("FILENAME", notes.get(position).getName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
-        mNoteLauncher.launch(intent);
+        resultLauncher.launch(intent);
     }
 
     private void loadSingle(String filename, int position){

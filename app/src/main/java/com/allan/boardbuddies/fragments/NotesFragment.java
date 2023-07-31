@@ -39,7 +39,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
     private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
     private File directory;
-    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
+    ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
@@ -91,7 +91,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EditActivity.class);
             intent.putExtra("FILEPATH", directory);
-            mNoteLauncher.launch(intent);
+            noteResultLauncher.launch(intent);
         });
     }
 
@@ -102,7 +102,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         intent.putExtra("FILENAME", notes.get(position).getName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
-        mNoteLauncher.launch(intent);
+        noteResultLauncher.launch(intent);
     }
 
     private void loadSingle(String filename, int position){
