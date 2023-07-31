@@ -38,23 +38,22 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     private String localTitle;
     private String localContent;
     private int localPosition;
-    private CanvasView paint;
     private BottomNavigationView bottomNavigationView;
+    private CanvasView canvasView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
         Toolbar toolbar = findViewById(R.id.edit_canvas_toolbar);
-
-        paint = findViewById(R.id.canvas_view);
-        ViewTreeObserver viewTreeObserver = paint.getViewTreeObserver();
+        canvasView = findViewById(R.id.canvas_view);
+        ViewTreeObserver viewTreeObserver = canvasView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    paint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    paint.init(paint.getWidth(), paint.getHeight());
+                    canvasView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    canvasView.init(canvasView.getWidth(), canvasView.getHeight());
                 }
             });
         }
