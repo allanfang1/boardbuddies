@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.fragments.TextDialogFragment;
 import com.allan.boardbuddies.views.CanvasView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,7 +32,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class CanvasActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
-    private static String textDialogRequestKey = "TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY";
     private EditText editTextTitle;
     private EditText editTextContent;
     private File filePath;
@@ -60,10 +60,10 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         }
         bottomNavigationView = findViewById(R.id.canvas_bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(this);
-        getSupportFragmentManager().setFragmentResultListener(textDialogRequestKey, this, new FragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(Constants.TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                String result = bundle.getString("TEXT_DIALOG_FRAGMENT_ADDED_TEXT");
+                String result = bundle.getString(Constants.TEXT_DIALOG_FRAGMENT_ADDED_TEXT);
                 canvasView.newTextBox(result);
             }
         });
@@ -140,7 +140,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = TextDialogFragment.newInstance("", textDialogRequestKey);
+        DialogFragment newFragment = TextDialogFragment.newInstance("");
         newFragment.show(ft, "dialog");
     }
 }

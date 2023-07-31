@@ -14,18 +14,18 @@ import android.widget.EditText;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.R;
 
 public class TextDialogFragment extends DialogFragment {
 
     private EditText captionText;
 
-    public static TextDialogFragment newInstance(String in, String requestKey) {
+    public static TextDialogFragment newInstance(String in) {
         TextDialogFragment f = new TextDialogFragment();
 
         Bundle args = new Bundle();
         args.putString("text", in);
-        args.putString("requestKey", requestKey);
         f.setArguments(args);
 
         return f;
@@ -58,8 +58,8 @@ public class TextDialogFragment extends DialogFragment {
         Button button = view.findViewById(R.id.dialog_button);
         button.setOnClickListener(v -> {
             Bundle result = new Bundle();
-            result.putString("TEXT_DIALOG_FRAGMENT_ADDED_TEXT", String.valueOf(captionText.getText()));
-            getParentFragmentManager().setFragmentResult(getArguments().getString("requestKey"), result);
+            result.putString(Constants.TEXT_DIALOG_FRAGMENT_ADDED_TEXT, String.valueOf(captionText.getText()));
+            getParentFragmentManager().setFragmentResult(Constants.TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY, result);
             dismiss();
         });
         super.onViewCreated(view, savedInstanceState);
