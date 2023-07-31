@@ -31,6 +31,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class CanvasActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
+    private static String textDialogRequestKey = "TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY";
     private EditText editTextTitle;
     private EditText editTextContent;
     private File filePath;
@@ -59,13 +60,11 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         }
         bottomNavigationView = findViewById(R.id.canvas_bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(this);
-        getSupportFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(textDialogRequestKey, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                String result = bundle.getString("bundleKey");
-                System.out.println(result);
+                String result = bundle.getString("TEXT_DIALOG_FRAGMENT_ADDED_TEXT");
                 canvasView.newTextBox(result);
-                // Do something with the result.
             }
         });
 
@@ -141,7 +140,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = TextDialogFragment.newInstance("testing");
+        DialogFragment newFragment = TextDialogFragment.newInstance("", textDialogRequestKey);
         newFragment.show(ft, "dialog");
     }
 }
