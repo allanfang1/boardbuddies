@@ -7,8 +7,8 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,8 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.allan.boardbuddies.EditActivity;
-import com.allan.boardbuddies.Note;
+import com.allan.boardbuddies.activities.EditActivity;
+import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.NoteAdapter;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -38,7 +38,9 @@ import java.util.Comparator;
 public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListener {
     private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
-    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
+    @Nullable
+    private File directory = null;
+    ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
@@ -64,6 +66,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        directory = getActivity().getApplicationContext().getFilesDir();
         loadNotes();
     }
 
@@ -88,7 +91,8 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EditActivity.class);
-            mNoteLauncher.launch(intent);
+            intent.putExtra("FILEPATH", directory);
+            noteResultLauncher.launch(intent);
         });
     }
 
@@ -97,12 +101,13 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         intent.putExtra("TITLE", notes.get(position).getTitle());
         intent.putExtra("CONTENT", notes.get(position).getContent());
         intent.putExtra("FILENAME", notes.get(position).getName());
+        intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
-        mNoteLauncher.launch(intent);
+        noteResultLauncher.launch(intent);
     }
 
     private void loadSingle(String filename, int position){
-        File file = new File(getActivity().getApplicationContext().getFilesDir(), filename);
+        File file = new File(directory, filename);
         String fileString = getFileString(file);
         try {
             JSONObject jsonObject = new JSONObject(fileString);
@@ -113,7 +118,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
     }
 
     private void loadNotes(){
-        File[] files = getActivity().getApplicationContext().getFilesDir().listFiles();
+        File[] files = directory.listFiles();
         notes.clear();
         if (files != null) {
             Arrays.sort(files, Comparator.comparing(File::getName).reversed());

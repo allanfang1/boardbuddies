@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
+import com.allan.boardbuddies.models.Note;
+
 // binds data to views displayed by RecyclerView
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
     private ArrayList<Note> notes;
