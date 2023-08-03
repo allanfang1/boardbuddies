@@ -39,8 +39,7 @@ import java.util.Comparator;
 public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListener {
     private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
-    @Nullable
-    private File directory = null;
+    private File directory;
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -77,7 +76,6 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
@@ -86,7 +84,6 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation()));
-        // Inflate the layout for this fragment
         return view;
     }
 

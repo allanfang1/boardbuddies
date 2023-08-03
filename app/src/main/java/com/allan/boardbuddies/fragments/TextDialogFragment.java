@@ -21,13 +21,12 @@ public class TextDialogFragment extends DialogFragment {
 
     private EditText captionText;
 
-    public static TextDialogFragment newInstance(String in) {
+    public static TextDialogFragment newInstance(String in, String resultKey) {
         TextDialogFragment f = new TextDialogFragment();
-
         Bundle args = new Bundle();
         args.putString("text", in);
+        args.putString("resultKey", resultKey);
         f.setArguments(args);
-
         return f;
     }
 
@@ -58,6 +57,7 @@ public class TextDialogFragment extends DialogFragment {
         Button button = view.findViewById(R.id.dialog_button);
         button.setOnClickListener(v -> {
             Bundle result = new Bundle();
+            result.putString("resultKey", getArguments().getString("resultKey"));
             result.putString(Constants.TEXT_DIALOG_FRAGMENT_ADDED_TEXT, String.valueOf(captionText.getText()));
             getParentFragmentManager().setFragmentResult(Constants.TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY, result);
             dismiss();

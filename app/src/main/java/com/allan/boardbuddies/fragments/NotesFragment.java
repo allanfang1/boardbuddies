@@ -38,8 +38,7 @@ import java.util.Comparator;
 public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListener {
     private ArrayList<Note> notes = new ArrayList<>();
     private NoteAdapter adapter;
-    @Nullable
-    private File directory = null;
+    private File directory;
     ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
