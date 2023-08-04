@@ -86,14 +86,14 @@ public class CanvasView extends View{
                 if (foundBox != null){
                     selectedBox = foundBox;
                 } else {
-                    touchDown(x, y);
+                    startDraw(x, y);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (selectedBox != null){
                     touchMoveText(x,y);
                 } else {
-                    touchMove(x, y);
+                    continueDraw(x, y);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -107,8 +107,8 @@ public class CanvasView extends View{
         return true;
     }
 
-    private void touchDown(float x, float y) {
-        stroke = new Stroke(strokeColor, strokeWidth, new Path());
+    private void startDraw(float x, float y) {
+        Stroke stroke = new Stroke(strokeColor, strokeWidth, new Path());
         strokes.add(stroke);
         stroke.addPoint(x, y);
         stroke.getPath().moveTo(x, y);
@@ -117,12 +117,12 @@ public class CanvasView extends View{
         currY = y;
     }
 
-    private void touchMove(float x, float y) {
+    private void continueDraw(float x, float y) {
         float dx = Math.abs(x - currX);
         float dy = Math.abs(y - currY);
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) { //checking if the touch has moved a significant amount (defined by touch_tolerance)
             stroke.getPath().quadTo(currX, currY, (x + currX) / 2f, (y + currY) / 2f);
-            stroke.addPoint(x, y);
             invalidate();
             currX = x;
             currY = y;

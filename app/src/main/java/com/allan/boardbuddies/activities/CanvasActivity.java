@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.Utilities;
+import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.fragments.TextDialogFragment;
 import com.allan.boardbuddies.models.Board;
 import com.allan.boardbuddies.models.Stroke;
@@ -50,8 +51,8 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     private ArrayList<Stroke> localStrokes;
     private ArrayList<TextBox> localTexts;
     private int localPosition;
-    private CanvasView paint;
     private BottomNavigationView bottomNavigationView;
+    private CanvasView canvasView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +60,15 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         setContentView(R.layout.activity_canvas);
         Toolbar toolbar = findViewById(R.id.edit_canvas_toolbar);
         canvasTitle = findViewById(R.id.canvas_title);
-        paint = findViewById(R.id.canvas_view);
+        canvasView = findViewById(R.id.canvas_view);
 
-        ViewTreeObserver viewTreeObserver = paint.getViewTreeObserver();
+        ViewTreeObserver viewTreeObserver = canvasView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    paint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    paint.init(paint.getWidth(), paint.getHeight());
+                    canvasView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    canvasView.init(canvasView.getWidth(), canvasView.getHeight());
                 }
             });
         }
@@ -85,13 +86,13 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
 
         bottomNavigationView = findViewById(R.id.canvas_bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(this);
-        getSupportFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(Constants.TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                String result = bundle.getString("bundleKey");
+                String result = bundle.getString(Constants.TEXT_DIALOG_FRAGMENT_ADDED_TEXT);
                 String resultKey = bundle.getString("resultKey");
                 if ("add_text".equals(resultKey)){
-                    paint.newTextBox(result);
+                    canvasView.newTextBox(result);
                 } else if ("edit_canvas_title".equals(resultKey)){
                     canvasTitle.setText(result);
                 }

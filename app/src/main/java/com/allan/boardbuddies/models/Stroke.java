@@ -4,12 +4,11 @@ import android.graphics.Path;
 
 import com.google.gson.annotations.Expose;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import androidx.annotation.ColorInt;
 
 public class Stroke {
-
-    @Expose
+    @ColorInt
     private int color;
     @Expose
     private int width;
@@ -17,7 +16,7 @@ public class Stroke {
     private ArrayList<float[]> points;
     private Path path;
 
-    public Stroke(int color, int width, Path path){
+    public Stroke(@ColorInt int color, int width, Path path){
         this.color = color;
         this.width = width;
         this.path = path;

@@ -39,7 +39,7 @@ public class NotesFragment extends Fragment implements CustomAdapter.OnElementLi
     private ArrayList<Note> notes = new ArrayList<>();
     private CustomAdapter adapter;
     private File directory;
-    ActivityResultLauncher<Intent> noteLauncher = registerForActivityResult(new StartActivityForResult(),
+    ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
@@ -99,7 +99,7 @@ public class NotesFragment extends Fragment implements CustomAdapter.OnElementLi
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EditActivity.class);
             intent.putExtra("FILEPATH", directory);
-            noteLauncher.launch(intent);
+            noteResultLauncher.launch(intent);
         });
     }
 
@@ -110,7 +110,7 @@ public class NotesFragment extends Fragment implements CustomAdapter.OnElementLi
         intent.putExtra("FILENAME", notes.get(position).getFileName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
-        noteLauncher.launch(intent);
+        noteResultLauncher.launch(intent);
     }
 
     private void loadSingle(String filename, int position){

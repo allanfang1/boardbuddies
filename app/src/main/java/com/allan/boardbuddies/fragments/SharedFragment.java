@@ -43,7 +43,7 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
     private ArrayList<Board> boards = new ArrayList<>();
     private CustomAdapter adapter;
     private File directory;
-    ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
@@ -101,7 +101,7 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), CanvasActivity.class);
             intent.putExtra("FILEPATH", directory);
-            mNoteLauncher.launch(intent);
+            resultLauncher.launch(intent);
         });
     }
 
@@ -110,7 +110,7 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
         intent.putExtra("FILENAME", boards.get(position).getFileName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
-        mNoteLauncher.launch(intent);
+        resultLauncher.launch(intent);
     }
 
     private void loadSingle(String filename, int position){
