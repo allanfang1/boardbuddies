@@ -19,25 +19,36 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.fragments.TextDialogFragment;
+import com.allan.boardbuddies.models.Board;
+import com.allan.boardbuddies.models.Stroke;
+import com.allan.boardbuddies.models.TextBox;
 import com.allan.boardbuddies.views.CanvasView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CanvasActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
-    private EditText editTextTitle;
+    private TextView canvasTitle;
     private EditText editTextContent;
     private File filePath;
     private String localFilename;
     private String localTitle;
-    private String localContent;
+    private Board localBoard;
+    private ArrayList<Stroke> localStrokes;
+    private ArrayList<TextBox> localTexts;
     private int localPosition;
     private CanvasView paint;
     private BottomNavigationView bottomNavigationView;
@@ -47,9 +58,9 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
         Toolbar toolbar = findViewById(R.id.edit_canvas_toolbar);
-        TextView canvasTitle = findViewById(R.id.canvas_title);
-
+        canvasTitle = findViewById(R.id.canvas_title);
         paint = findViewById(R.id.canvas_view);
+
         ViewTreeObserver viewTreeObserver = paint.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -60,6 +71,18 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
                 }
             });
         }
+
+        filePath = (File)getIntent().getExtras().get("FILEPATH");
+        if (getIntent().getExtras().get("FILENAME") != null){
+            localPosition = getIntent().getExtras().getInt("POSITION");
+            localFilename = getIntent().getExtras().getString("FILENAME");
+            localBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
+            localTitle = localBoard.getTitle();
+            paint.setStrokes(localBoard.getStrokes());
+            paint.setTexts(localBoard.getTexts());
+            canvasTitle.setText(localBoard.getTitle());
+        }
+
         bottomNavigationView = findViewById(R.id.canvas_bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(this);
         getSupportFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
@@ -75,52 +98,18 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             }
         });
 
-        toolbar.setNavigationOnClickListener(v -> { finish();});
-//        toolbar.setNavigationOnClickListener(v -> {
-//            Intent resultIntent = new Intent();
-//            if (localFilename == null){ //if there is no local file: saveTextNote()
-//                resultIntent.putExtra("addedFilename", saveTextNote());
-//            } else if (!localTitle.equals(editTextTitle.getText().toString()) || !localContent.equals(editTextContent.getText().toString())) { //if local file has been changed
-//                resultIntent.putExtra("addedFilename", saveTextNote());
-//                resultIntent.putExtra("deletedPosition", localPosition);
-//                getApplicationContext().deleteFile(localFilename);
-//            }
-//            setResult(RESULT_OK, resultIntent);
-//            finish();
-//        });
-//
-//        if (getIntent().getExtras() != null){
-//            filePath = (File)getIntent().getExtras().get("FILEPATH");
-//            localFilename = getIntent().getExtras().getString("FILENAME");
-//            localTitle = getIntent().getExtras().getString("TITLE");
-//            localContent = getIntent().getExtras().getString("CONTENT");
-//            localPosition = getIntent().getExtras().getInt("POSITION");
-//            editTextTitle.setText(localTitle);
-//            editTextContent.setText(localContent);
-//        }
-//    }
-//
-//    private String saveTextNote(){
-//        String title = editTextTitle.getText().toString();
-//        String content = editTextContent.getText().toString();
-//        if (!title.trim().isEmpty() || !content.trim().isEmpty()){
-//            String fileName = System.currentTimeMillis() + ".json";
-//            try {
-//                JSONObject jsonObject = new JSONObject();
-//                jsonObject.put("title", title);
-//                jsonObject.put("content", content);
-//                String jsonString = jsonObject.toString();
-//
-//                File file = new File(filePath, fileName);
-//                FileWriter fileWriter = new FileWriter(file);
-//                fileWriter.write(jsonString);
-//                fileWriter.close();
-//                return fileName;
-//            } catch (IOException | JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return null;
+        toolbar.setNavigationOnClickListener(v -> {
+            Intent resultIntent = new Intent();
+            if (localFilename == null){ //if there is no local file: saveTextNote()
+                resultIntent.putExtra("addedFilename", saveTextNote());
+            } else if (!localTitle.equals(canvasTitle.getText().toString()) || false) { //if local file has been changed
+                resultIntent.putExtra("addedFilename", saveTextNote());
+                resultIntent.putExtra("deletedPosition", localPosition);
+                new File(filePath, localFilename).delete();
+            }
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        });
     }
 
     @Override
@@ -139,16 +128,37 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     }
 
     private void showDialog(String resultKey) {
-        // DialogFragment.show() will take care of adding the fragment
-        // in a transaction.  We also want to remove any currently showing
-        // dialog, so make our own transaction and take care of that here.
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        DialogFragment newFragment = TextDialogFragment.newInstance("testing", resultKey);
+        DialogFragment newFragment = TextDialogFragment.newInstance("", resultKey);
         newFragment.show(ft, "dialog");
+    }
+
+    private String saveTextNote(){
+        String title = canvasTitle.getText().toString();
+        ArrayList<Stroke> contentStroke = paint.getStrokes();
+        ArrayList<TextBox> contentText = paint.getTextBoxes();
+        if (!title.trim().isEmpty() || !contentStroke.isEmpty() || !contentText.isEmpty()){
+            String fileName = System.currentTimeMillis() + ".json";
+            try {
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+                Board newBoard = new Board(title, contentStroke, contentText, fileName);
+                String jsonString = gson.toJson(newBoard);
+                File file = new File(filePath, fileName);
+
+                FileWriter fileWriter = new FileWriter(file);
+                fileWriter.write(jsonString);
+                fileWriter.close();
+
+                return fileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

@@ -16,6 +16,8 @@ import com.allan.boardbuddies.models.Stroke;
 import com.allan.boardbuddies.models.TextBox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class CanvasView extends View{
     private static final float TOUCH_TOLERANCE = 4;
@@ -27,7 +29,7 @@ public class CanvasView extends View{
     private ArrayList<TextBox> texts = new ArrayList<>();
     private float currX, currY, offsetX, offsetY;
     private TextBox selectedBox;
-    private Path path;
+    private Stroke stroke;
     private int strokeColor;
     private int strokeWidth;
 
@@ -39,7 +41,6 @@ public class CanvasView extends View{
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAlpha(0xff);
-        //paint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void init(int width, int height) {
@@ -107,10 +108,10 @@ public class CanvasView extends View{
     }
 
     private void touchDown(float x, float y) {
-        path = new Path();
-        Stroke stroke = new Stroke(strokeColor, strokeWidth, path);
+        stroke = new Stroke(strokeColor, strokeWidth, new Path());
         strokes.add(stroke);
-        path.moveTo(x, y);
+        stroke.addPoint(x, y);
+        stroke.getPath().moveTo(x, y);
         invalidate();
         currX = x;
         currY = y;
@@ -119,9 +120,9 @@ public class CanvasView extends View{
     private void touchMove(float x, float y) {
         float dx = Math.abs(x - currX);
         float dy = Math.abs(y - currY);
-
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            path.quadTo(currX, currY, (x + currX) / 2, (y + currY) / 2);
+            stroke.getPath().quadTo(currX, currY, (x + currX) / 2f, (y + currY) / 2f);
+            stroke.addPoint(x, y);
             invalidate();
             currX = x;
             currY = y;
@@ -129,7 +130,7 @@ public class CanvasView extends View{
     }
 
     private void touchUp(){
-        path.lineTo(currX, currY);
+        stroke.getPath().lineTo(currX, currY);
         invalidate();
     }
 
@@ -140,8 +141,8 @@ public class CanvasView extends View{
     }
 
     public void newTextBox(String text){
-        TextBox textBox = new TextBox(0, canvas.getHeight() / 2, text, 75, Color.BLUE);
-        textBox.setX((canvas.getWidth() - getBoundsF(textBox).width()) / 2);
+        TextBox textBox = new TextBox(0, canvas.getHeight() / 2f, text, 75, Color.BLUE);
+        textBox.setX((canvas.getWidth() - getBoundsF(textBox).width()) / 2f);
         texts.add(textBox);
         invalidate();
     }
@@ -175,6 +176,33 @@ public class CanvasView extends View{
 
     public ArrayList<TextBox> getTextBoxes(){
         return texts;
+    }
+
+    public void setStrokes(ArrayList<Stroke> strokes) {
+        for (Stroke stroke : strokes){
+            Path path = new Path();
+            stroke.setPath(path);
+            ArrayList<float[]> points = stroke.getPoints();
+            if (points != null && !points.isEmpty()) {
+                Iterator<float[]> i = points.iterator();
+                float[] nextCoord = i.next();
+                float tempX = nextCoord[0];
+                float tempY = nextCoord[1];
+                path.moveTo(tempX, tempY);
+                while (i.hasNext()) {
+                    nextCoord = i.next();
+                    path.quadTo(tempX, tempY, (nextCoord[0] + tempX) / 2f, (nextCoord[1] + tempY) / 2f);
+                    tempX = nextCoord[0];
+                    tempY = nextCoord[1];
+                }
+                path.lineTo(tempX, tempY);
+            }
+        }
+        this.strokes = strokes;
+    }
+
+    public void setTexts(ArrayList<TextBox> texts) {
+        this.texts = texts;
     }
 }
 

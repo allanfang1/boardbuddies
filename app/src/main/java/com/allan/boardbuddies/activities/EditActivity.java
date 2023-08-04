@@ -39,7 +39,7 @@ public class EditActivity extends AppCompatActivity {
             } else if (!localTitle.equals(editTextTitle.getText().toString()) || !localContent.equals(editTextContent.getText().toString())) { //if local file has been changed
                 resultIntent.putExtra("addedFilename", saveTextNote());
                 resultIntent.putExtra("deletedPosition", localPosition);
-                getApplicationContext().deleteFile(localFilename);
+                new File(filePath, localFilename).delete();
             }
             setResult(RESULT_OK, resultIntent);
             finish();

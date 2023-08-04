@@ -8,7 +8,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,12 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.allan.boardbuddies.CustomAdapter;
+import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.activities.CanvasActivity;
-import com.allan.boardbuddies.activities.EditActivity;
-import com.allan.boardbuddies.models.Note;
-import com.allan.boardbuddies.NoteAdapter;
+import com.allan.boardbuddies.models.Board;
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.models.TextBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,10 +37,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
-public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListener {
-    private ArrayList<Note> notes = new ArrayList<>();
-    private NoteAdapter adapter;
+public class SharedFragment extends Fragment implements CustomAdapter.OnElementListener {
+    private ArrayList<Board> boards = new ArrayList<>();
+    private CustomAdapter adapter;
     private File directory;
     ActivityResultLauncher<Intent> mNoteLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -49,7 +52,7 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
                         String addedFilename = data.getStringExtra("addedFilename");
                         int deletedPosition = data.getIntExtra("deletedPosition", -1);
                         if (deletedPosition != -1){
-                            notes.remove(deletedPosition);
+                            boards.remove(deletedPosition);
                             adapter.notifyItemRemoved(deletedPosition);
                         }
                         if (addedFilename != null) {
@@ -80,7 +83,12 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new NoteAdapter(notes, this);
+        adapter = new CustomAdapter<Board>(boards, this){
+            @Override
+            protected void populateViewHolder(ElementViewHolder holder, Board element) {
+                holder.titleTextView.setText(element.getTitle());
+            }
+        };
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation()));
@@ -92,15 +100,14 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), CanvasActivity.class);
+            intent.putExtra("FILEPATH", directory);
             mNoteLauncher.launch(intent);
         });
     }
 
-    public void onNoteClick(int position){
-        Intent intent = new Intent(requireContext(), EditActivity.class);
-        intent.putExtra("TITLE", notes.get(position).getTitle());
-        intent.putExtra("CONTENT", notes.get(position).getContent());
-        intent.putExtra("FILENAME", notes.get(position).getName());
+    public void onElementClick(int position){
+        Intent intent = new Intent(requireContext(), CanvasActivity.class);
+        intent.putExtra("FILENAME", boards.get(position).getFileName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
         mNoteLauncher.launch(intent);
@@ -108,47 +115,21 @@ public class SharedFragment extends Fragment implements NoteAdapter.OnNoteListen
 
     private void loadSingle(String filename, int position){
         File file = new File(directory, filename);
-        String fileString = getFileString(file);
-        try {
-            JSONObject jsonObject = new JSONObject(fileString);
-            notes.add(position, new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String fileString = Utilities.getFileAsString(file);
+        boards.add(position, new Gson().fromJson(fileString, Board.class));
     }
 
     private void loadNotes(){
         File[] files = directory.listFiles();
-        notes.clear();
+        boards.clear();
         if (files != null) {
             Arrays.sort(files, Comparator.comparing(File::getName).reversed());
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".json")) {
-                    String fileString = getFileString(file);
-                    try {
-                        JSONObject jsonObject = new JSONObject(fileString);
-                        notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    String fileString = Utilities.getFileAsString(file);
+                    boards.add(new Gson().fromJson(fileString, Board.class));
                 }
             }
-        }
-    }
-
-    private String getFileString(File file){
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            reader.close();
-            return stringBuilder.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 }

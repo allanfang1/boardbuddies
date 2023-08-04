@@ -18,7 +18,7 @@ public class Note {
     public String getContent(){
         return this.content;
     }
-    public String getName(){
+    public String getFileName(){
         return this.filename;
     }
 
