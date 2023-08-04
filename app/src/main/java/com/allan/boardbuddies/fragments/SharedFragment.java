@@ -3,6 +3,9 @@ package com.allan.boardbuddies.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -13,31 +16,18 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.allan.boardbuddies.CustomAdapter;
+import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.activities.CanvasActivity;
 import com.allan.boardbuddies.models.Board;
-import com.allan.boardbuddies.R;
-import com.allan.boardbuddies.models.TextBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 public class SharedFragment extends Fragment implements CustomAdapter.OnElementListener {
     private ArrayList<Board> boards = new ArrayList<>();

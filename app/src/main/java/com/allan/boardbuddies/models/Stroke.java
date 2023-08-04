@@ -9,6 +9,7 @@ import androidx.annotation.ColorInt;
 
 public class Stroke {
     @ColorInt
+    @Expose
     private int color;
     @Expose
     private int width;
@@ -20,7 +21,7 @@ public class Stroke {
         this.color = color;
         this.width = width;
         this.path = path;
-        this.points = new ArrayList<float[]>();
+        this.points = new ArrayList<>();
     }
 
     public int getColor() {

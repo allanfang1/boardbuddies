@@ -1,20 +1,23 @@
 package com.allan.boardbuddies.models;
 
-import android.graphics.Path;
+import androidx.annotation.ColorInt;
 
 import com.google.gson.annotations.Expose;
 
 public class TextBox {
     @Expose
-    private float x, y;
+    private float x;
+    @Expose
+    private float y;
     @Expose
     private int textSize;
     @Expose
     private String text;
+    @ColorInt
     @Expose
     private int color;
 
-    public TextBox(float x, float y, String text, int size, int color){
+    public TextBox(float x, float y, String text, int size, @ColorInt int color){
         this.x = x;
         this.y = y;
         this.textSize = size;

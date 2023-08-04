@@ -8,8 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allan.boardbuddies.models.Note;
-
 import java.util.ArrayList;
 
 // binds data to views displayed by RecyclerView
@@ -32,9 +30,8 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     // Prepare view to be added to layout, called after ViewHolder obtained
     @Override
-    public void onBindViewHolder(ElementViewHolder holder, int position){
+    public void onBindViewHolder(@NonNull ElementViewHolder holder, int position){
         populateViewHolder(holder, elements.get(position));
-                //holder.titleTextView.setText(element.getTitle());
     }
 
     protected abstract void populateViewHolder(ElementViewHolder holder, T element);

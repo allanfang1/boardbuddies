@@ -1,12 +1,9 @@
 package com.allan.boardbuddies.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -18,9 +15,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.Utilities;
-import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.fragments.TextDialogFragment;
 import com.allan.boardbuddies.models.Board;
 import com.allan.boardbuddies.models.Stroke;
@@ -31,15 +28,10 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CanvasActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
     private TextView canvasTitle;
@@ -79,8 +71,8 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             localFilename = getIntent().getExtras().getString("FILENAME");
             localBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
             localTitle = localBoard.getTitle();
-            paint.setStrokes(localBoard.getStrokes());
-            paint.setTexts(localBoard.getTexts());
+            canvasView.setStrokes(localBoard.getStrokes());
+            canvasView.setTexts(localBoard.getTexts());
             canvasTitle.setText(localBoard.getTitle());
         }
 
@@ -139,10 +131,10 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         newFragment.show(ft, "dialog");
     }
 
-    private String saveTextNote(){
+    private String saveTextNote() {
         String title = canvasTitle.getText().toString();
-        ArrayList<Stroke> contentStroke = paint.getStrokes();
-        ArrayList<TextBox> contentText = paint.getTextBoxes();
+        ArrayList<Stroke> contentStroke = canvasView.getStrokes();
+        ArrayList<TextBox> contentText = canvasView.getTextBoxes();
         if (!title.trim().isEmpty() || !contentStroke.isEmpty() || !contentText.isEmpty()){
             String fileName = System.currentTimeMillis() + ".json";
             try {

@@ -16,7 +16,6 @@ import com.allan.boardbuddies.models.Stroke;
 import com.allan.boardbuddies.models.TextBox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class CanvasView extends View{
@@ -100,7 +99,7 @@ public class CanvasView extends View{
                 if (selectedBox != null){
                     selectedBox = null;
                 } else {
-                    touchUp();
+                    endDraw();
                 }
                 break;
         }
@@ -108,11 +107,11 @@ public class CanvasView extends View{
     }
 
     private void startDraw(float x, float y) {
-        Stroke stroke = new Stroke(strokeColor, strokeWidth, new Path());
+        stroke = new Stroke(strokeColor, strokeWidth, new Path());
         strokes.add(stroke);
-        stroke.addPoint(x, y);
         stroke.getPath().moveTo(x, y);
         invalidate();
+        stroke.addPoint(x, y);
         currX = x;
         currY = y;
     }
@@ -120,16 +119,16 @@ public class CanvasView extends View{
     private void continueDraw(float x, float y) {
         float dx = Math.abs(x - currX);
         float dy = Math.abs(y - currY);
-
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) { //checking if the touch has moved a significant amount (defined by touch_tolerance)
             stroke.getPath().quadTo(currX, currY, (x + currX) / 2f, (y + currY) / 2f);
             invalidate();
+            stroke.addPoint(x, y);
             currX = x;
             currY = y;
         }
     }
 
-    private void touchUp(){
+    private void endDraw(){
         stroke.getPath().lineTo(currX, currY);
         invalidate();
     }
