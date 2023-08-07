@@ -25,6 +25,14 @@ public class TextBox {
         this.color = color;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TextBox textBox = (TextBox) o;
+        return Float.compare(textBox.x, x) == 0 && Float.compare(textBox.y, y) == 0 && textSize == textBox.textSize && color == textBox.color && text.equals(textBox.text);
+    }
+
     public int getTextSize() {
         return textSize;
     }

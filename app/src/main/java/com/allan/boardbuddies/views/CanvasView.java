@@ -24,8 +24,8 @@ public class CanvasView extends View{
     private Paint bitmapPaint = new Paint(Paint.DITHER_FLAG);
     private Bitmap bitmap;
     private Canvas canvas;
-    private ArrayList<Stroke> strokes = new ArrayList<>();
-    private ArrayList<TextBox> texts = new ArrayList<>();
+    private ArrayList<Stroke> strokes;
+    private ArrayList<TextBox> texts;
     private float currX, currY, offsetX, offsetY;
     private TextBox selectedBox;
     private Stroke stroke;
@@ -178,6 +178,7 @@ public class CanvasView extends View{
     }
 
     public void setStrokes(ArrayList<Stroke> strokes) {
+
         for (Stroke stroke : strokes){
             Path path = new Path();
             stroke.setPath(path);

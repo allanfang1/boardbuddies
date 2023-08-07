@@ -2,10 +2,12 @@ package com.allan.boardbuddies.models;
 
 import android.graphics.Path;
 
+import androidx.annotation.ColorInt;
+
+import com.allan.boardbuddies.Utilities;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
-import androidx.annotation.ColorInt;
 
 public class Stroke {
     @ColorInt
@@ -22,6 +24,14 @@ public class Stroke {
         this.width = width;
         this.path = path;
         this.points = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stroke stroke = (Stroke) o;
+        return color == stroke.color && width == stroke.width && Utilities.compareArraylist(points, stroke.points);
     }
 
     public int getColor() {

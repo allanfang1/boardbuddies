@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,13 +34,10 @@ import java.util.ArrayList;
 
 public class CanvasActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
     private TextView canvasTitle;
-    private EditText editTextContent;
     private File filePath;
     private String localFilename;
     private String localTitle;
     private Board localBoard;
-    private ArrayList<Stroke> localStrokes;
-    private ArrayList<TextBox> localTexts;
     private int localPosition;
     private BottomNavigationView bottomNavigationView;
     private CanvasView canvasView;
@@ -71,9 +67,13 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             localFilename = getIntent().getExtras().getString("FILENAME");
             localBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
             localTitle = localBoard.getTitle();
-            canvasView.setStrokes(localBoard.getStrokes());
-            canvasView.setTexts(localBoard.getTexts());
-            canvasTitle.setText(localBoard.getTitle());
+            canvasTitle.setText(localTitle);
+            Board tempBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
+            canvasView.setStrokes(tempBoard.getStrokes());
+            canvasView.setTexts(tempBoard.getTexts());
+        } else {
+            canvasView.setStrokes(new ArrayList<>());
+            canvasView.setTexts(new ArrayList<>());
         }
 
         bottomNavigationView = findViewById(R.id.canvas_bottom_nav);
@@ -83,7 +83,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 String result = bundle.getString(Constants.TEXT_DIALOG_FRAGMENT_ADDED_TEXT);
                 String resultKey = bundle.getString("resultKey");
-                if ("add_text".equals(resultKey)){
+                if ("add_text".equals(resultKey) && !result.isEmpty()){
                     canvasView.newTextBox(result);
                 } else if ("edit_canvas_title".equals(resultKey)){
                     canvasTitle.setText(result);
@@ -95,7 +95,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             Intent resultIntent = new Intent();
             if (localFilename == null){ //if there is no local file: saveTextNote()
                 resultIntent.putExtra("addedFilename", saveTextNote());
-            } else if (!localTitle.equals(canvasTitle.getText().toString()) || false) { //if local file has been changed
+            } else if (!localTitle.equals(canvasTitle.getText().toString()) || !Utilities.compareArraylist(localBoard.getStrokes(), canvasView.getStrokes()) || !Utilities.compareArraylist(localBoard.getTexts(), canvasView.getTextBoxes())) { //if local file has been changed
                 resultIntent.putExtra("addedFilename", saveTextNote());
                 resultIntent.putExtra("deletedPosition", localPosition);
                 new File(filePath, localFilename).delete();

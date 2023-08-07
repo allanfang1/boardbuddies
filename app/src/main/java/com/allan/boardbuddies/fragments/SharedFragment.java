@@ -104,8 +104,7 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
     }
 
     private void loadSingle(String filename, int position){
-        File file = new File(directory, filename);
-        String fileString = Utilities.getFileAsString(file);
+        String fileString = Utilities.getFileAsString(new File(directory, filename));
         boards.add(position, new Gson().fromJson(fileString, Board.class));
     }
 
