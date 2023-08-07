@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 // binds data to views displayed by RecyclerView
-public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.ElementViewHolder> {
+public abstract class MemoAdapter<T> extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder> {
     private ArrayList<T> elements;
     private OnElementListener onElementListener;
     //constructor
-    public CustomAdapter(ArrayList<T> elements, OnElementListener onElementListener){
+    public MemoAdapter(ArrayList<T> elements, OnElementListener onElementListener){
         this.elements = elements;
         this.onElementListener = onElementListener;
     }
@@ -23,18 +23,18 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     //Creates ViewHolder for view (note_item.xml), converts xml to View object, this method runs when no ViewHolders are available
     @NonNull
     @Override
-    public ElementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MemoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
-        return new ElementViewHolder(itemView, this.onElementListener);
+        return new MemoViewHolder(itemView, this.onElementListener);
     }
 
     // Prepare view to be added to layout, called after ViewHolder obtained
     @Override
-    public void onBindViewHolder(@NonNull ElementViewHolder holder, int position){
-        populateViewHolder(holder, elements.get(position));
+    public void onBindViewHolder(@NonNull MemoViewHolder holder, int position){
+        populateMemoViewHolder(holder, elements.get(position));
     }
 
-    protected abstract void populateViewHolder(ElementViewHolder holder, T element);
+    protected abstract void populateMemoViewHolder(MemoViewHolder holder, T element);
 
     //item count
     @Override
@@ -43,10 +43,10 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     }
 
     // Allows access to each list item view without needing to lookup every time
-    public static class ElementViewHolder extends RecyclerView.ViewHolder{
+    public static class MemoViewHolder extends RecyclerView.ViewHolder{
         public TextView titleTextView;
 
-        public ElementViewHolder(View itemView, OnElementListener onElementListener) {
+        public MemoViewHolder(View itemView, OnElementListener onElementListener) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.note_title_text);
             itemView.setOnClickListener(view -> onElementListener.onElementClick(getBindingAdapterPosition()));

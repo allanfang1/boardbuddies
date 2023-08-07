@@ -21,6 +21,9 @@ public class Board {
         this.filename = filename;
     }
 
+    public Board() {
+    }
+
     public String getTitle() {
         return title;
     }

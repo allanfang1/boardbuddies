@@ -17,7 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.allan.boardbuddies.CustomAdapter;
+import com.allan.boardbuddies.MemoAdapter;
 import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.activities.EditActivity;
 import com.allan.boardbuddies.models.Note;
@@ -27,17 +27,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class NotesFragment extends Fragment implements CustomAdapter.OnElementListener {
+public class NotesFragment extends Fragment implements MemoAdapter.OnElementListener {
     private ArrayList<Note> notes = new ArrayList<>();
-    private CustomAdapter adapter;
+    private MemoAdapter adapter;
     private File directory;
     ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -80,16 +77,15 @@ public class NotesFragment extends Fragment implements CustomAdapter.OnElementLi
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new CustomAdapter<Note>(notes, this){
+        adapter = new MemoAdapter<Note>(notes, this){
             @Override
-            protected void populateViewHolder(ElementViewHolder holder, Note element) {
+            protected void populateMemoViewHolder(MemoViewHolder holder, Note element) {
                 holder.titleTextView.setText(element.getTitle());
             }
         };
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation()));
-        // Inflate the layout for this fragment
         return view;
     }
 

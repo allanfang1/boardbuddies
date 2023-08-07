@@ -1,8 +1,6 @@
 package com.allan.boardbuddies;
 
-import com.allan.boardbuddies.models.TextBox;
-
-import org.w3c.dom.Text;
+import androidx.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +11,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class Utilities {
-    public static String getFileAsString(File file){
+    public static @Nullable String getFileAsString(File file){
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             StringBuilder stringBuilder = new StringBuilder();

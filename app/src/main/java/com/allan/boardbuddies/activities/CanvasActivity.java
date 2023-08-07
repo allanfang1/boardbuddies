@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
@@ -36,7 +37,6 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     private TextView canvasTitle;
     private File filePath;
     private String localFilename;
-    private String localTitle;
     private Board localBoard;
     private int localPosition;
     private BottomNavigationView bottomNavigationView;
@@ -66,12 +66,12 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             localPosition = getIntent().getExtras().getInt("POSITION");
             localFilename = getIntent().getExtras().getString("FILENAME");
             localBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
-            localTitle = localBoard.getTitle();
-            canvasTitle.setText(localTitle);
+            canvasTitle.setText(localBoard.getTitle());
             Board tempBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
             canvasView.setStrokes(tempBoard.getStrokes());
             canvasView.setTexts(tempBoard.getTexts());
         } else {
+            localBoard = new Board();
             canvasView.setStrokes(new ArrayList<>());
             canvasView.setTexts(new ArrayList<>());
         }
@@ -95,7 +95,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             Intent resultIntent = new Intent();
             if (localFilename == null){ //if there is no local file: saveTextNote()
                 resultIntent.putExtra("addedFilename", saveTextNote());
-            } else if (!localTitle.equals(canvasTitle.getText().toString()) || !Utilities.compareArraylist(localBoard.getStrokes(), canvasView.getStrokes()) || !Utilities.compareArraylist(localBoard.getTexts(), canvasView.getTextBoxes())) { //if local file has been changed
+            } else if (!localBoard.getTitle().equals(canvasTitle.getText().toString()) || !Utilities.compareArraylist(localBoard.getStrokes(), canvasView.getStrokes()) || !Utilities.compareArraylist(localBoard.getTexts(), canvasView.getTextBoxes())) { //if local file has been changed
                 resultIntent.putExtra("addedFilename", saveTextNote());
                 resultIntent.putExtra("deletedPosition", localPosition);
                 new File(filePath, localFilename).delete();
@@ -131,7 +131,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
         newFragment.show(ft, "dialog");
     }
 
-    private String saveTextNote() {
+    private @Nullable String saveTextNote() {
         String title = canvasTitle.getText().toString();
         ArrayList<Stroke> contentStroke = canvasView.getStrokes();
         ArrayList<TextBox> contentText = canvasView.getTextBoxes();
