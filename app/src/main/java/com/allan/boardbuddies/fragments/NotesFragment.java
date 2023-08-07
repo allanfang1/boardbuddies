@@ -8,7 +8,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,9 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.allan.boardbuddies.CustomAdapter;
+import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.activities.EditActivity;
 import com.allan.boardbuddies.models.Note;
-import com.allan.boardbuddies.NoteAdapter;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListener {
+public class NotesFragment extends Fragment implements CustomAdapter.OnElementListener {
     private ArrayList<Note> notes = new ArrayList<>();
-    private NoteAdapter adapter;
+    private CustomAdapter adapter;
     private File directory;
     ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -65,7 +65,10 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        directory = getActivity().getApplicationContext().getFilesDir();
+        directory = new File(getActivity().getApplicationContext().getFilesDir(), "notes");
+        if (!directory.exists()){
+            directory.mkdir();
+        }
         loadNotes();
     }
 
@@ -77,7 +80,12 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new NoteAdapter(notes, this);
+        adapter = new CustomAdapter<Note>(notes, this){
+            @Override
+            protected void populateViewHolder(ElementViewHolder holder, Note element) {
+                holder.titleTextView.setText(element.getTitle());
+            }
+        };
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation()));
@@ -95,11 +103,11 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
         });
     }
 
-    public void onNoteClick(int position){
+    public void onElementClick(int position){
         Intent intent = new Intent(requireContext(), EditActivity.class);
         intent.putExtra("TITLE", notes.get(position).getTitle());
         intent.putExtra("CONTENT", notes.get(position).getContent());
-        intent.putExtra("FILENAME", notes.get(position).getName());
+        intent.putExtra("FILENAME", notes.get(position).getFileName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
         noteResultLauncher.launch(intent);
@@ -107,7 +115,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
 
     private void loadSingle(String filename, int position){
         File file = new File(directory, filename);
-        String fileString = getFileString(file);
+        String fileString = Utilities.getFileAsString(file);
         try {
             JSONObject jsonObject = new JSONObject(fileString);
             notes.add(position, new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
@@ -123,7 +131,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
             Arrays.sort(files, Comparator.comparing(File::getName).reversed());
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".json")) {
-                    String fileString = getFileString(file);
+                    String fileString = Utilities.getFileAsString(file);
                     try {
                         JSONObject jsonObject = new JSONObject(fileString);
                         notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
@@ -132,22 +140,6 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteListene
                     }
                 }
             }
-        }
-    }
-
-    private String getFileString(File file){
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            reader.close();
-            return stringBuilder.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 }

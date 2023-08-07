@@ -16,6 +16,7 @@ import com.allan.boardbuddies.models.Stroke;
 import com.allan.boardbuddies.models.TextBox;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class CanvasView extends View{
     private static final float TOUCH_TOLERANCE = 4;
@@ -23,11 +24,11 @@ public class CanvasView extends View{
     private Paint bitmapPaint = new Paint(Paint.DITHER_FLAG);
     private Bitmap bitmap;
     private Canvas canvas;
-    private ArrayList<Stroke> strokes = new ArrayList<>();
-    private ArrayList<TextBox> texts = new ArrayList<>();
+    private ArrayList<Stroke> strokes;
+    private ArrayList<TextBox> texts;
     private float currX, currY, offsetX, offsetY;
     private TextBox selectedBox;
-    private Path path;
+    private Stroke stroke;
     private int strokeColor;
     private int strokeWidth;
 
@@ -39,7 +40,6 @@ public class CanvasView extends View{
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAlpha(0xff);
-        //paint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void init(int width, int height) {
@@ -99,7 +99,7 @@ public class CanvasView extends View{
                 if (selectedBox != null){
                     selectedBox = null;
                 } else {
-                    touchUp();
+                    endDraw();
                 }
                 break;
         }
@@ -107,11 +107,11 @@ public class CanvasView extends View{
     }
 
     private void startDraw(float x, float y) {
-        path = new Path();
-        Stroke stroke = new Stroke(strokeColor, strokeWidth, path);
+        stroke = new Stroke(strokeColor, strokeWidth, new Path());
         strokes.add(stroke);
-        path.moveTo(x, y);
+        stroke.getPath().moveTo(x, y);
         invalidate();
+        stroke.addPoint(x, y);
         currX = x;
         currY = y;
     }
@@ -119,17 +119,17 @@ public class CanvasView extends View{
     private void continueDraw(float x, float y) {
         float dx = Math.abs(x - currX);
         float dy = Math.abs(y - currY);
-
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) { //checking if the touch has moved a significant amount (defined by touch_tolerance)
-            path.quadTo(currX, currY, (x + currX) / 2, (y + currY) / 2);
+            stroke.getPath().quadTo(currX, currY, (x + currX) / 2f, (y + currY) / 2f);
             invalidate();
+            stroke.addPoint(x, y);
             currX = x;
             currY = y;
         }
     }
 
-    private void touchUp(){
-        path.lineTo(currX, currY);
+    private void endDraw(){
+        stroke.getPath().lineTo(currX, currY);
         invalidate();
     }
 
@@ -140,8 +140,8 @@ public class CanvasView extends View{
     }
 
     public void newTextBox(String text){
-        TextBox textBox = new TextBox(0, canvas.getHeight() / 2, text, 75, Color.BLUE);
-        textBox.setX((canvas.getWidth() - getBoundsF(textBox).width()) / 2);
+        TextBox textBox = new TextBox(0, canvas.getHeight() / 2f, text, 75, Color.BLUE);
+        textBox.setX((canvas.getWidth() - getBoundsF(textBox).width()) / 2f);
         texts.add(textBox);
         invalidate();
     }
@@ -175,6 +175,34 @@ public class CanvasView extends View{
 
     public ArrayList<TextBox> getTextBoxes(){
         return texts;
+    }
+
+    public void setStrokes(ArrayList<Stroke> strokes) {
+
+        for (Stroke stroke : strokes){
+            Path path = new Path();
+            stroke.setPath(path);
+            ArrayList<float[]> points = stroke.getPoints();
+            if (points != null && !points.isEmpty()) {
+                Iterator<float[]> i = points.iterator();
+                float[] nextCoord = i.next();
+                float tempX = nextCoord[0];
+                float tempY = nextCoord[1];
+                path.moveTo(tempX, tempY);
+                while (i.hasNext()) {
+                    nextCoord = i.next();
+                    path.quadTo(tempX, tempY, (nextCoord[0] + tempX) / 2f, (nextCoord[1] + tempY) / 2f);
+                    tempX = nextCoord[0];
+                    tempY = nextCoord[1];
+                }
+                path.lineTo(tempX, tempY);
+            }
+        }
+        this.strokes = strokes;
+    }
+
+    public void setTexts(ArrayList<TextBox> texts) {
+        this.texts = texts;
     }
 }
 

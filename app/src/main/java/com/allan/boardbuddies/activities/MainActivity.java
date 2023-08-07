@@ -1,21 +1,14 @@
 package com.allan.boardbuddies.activities;
 
-import androidx.annotation.NonNull;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import android.os.Bundle;
-import android.view.MenuItem;
-
 import com.allan.boardbuddies.R;
-import com.allan.boardbuddies.fragments.NotesFragment;
-import com.allan.boardbuddies.fragments.SharedFragment;
-import com.allan.boardbuddies.fragments.TrashFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 
 public class MainActivity extends AppCompatActivity{
