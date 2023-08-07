@@ -29,12 +29,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class CanvasActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
-    private TextView canvasTitle;
+public class BoardActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
+    private TextView boardTitle;
     private File filePath;
     private String localFilename;
     private Board localBoard;
@@ -45,9 +43,9 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_canvas);
-        Toolbar toolbar = findViewById(R.id.edit_canvas_toolbar);
-        canvasTitle = findViewById(R.id.canvas_title);
+        setContentView(R.layout.activity_board);
+        Toolbar toolbar = findViewById(R.id.board_toolbar);
+        boardTitle = findViewById(R.id.board_title);
         canvasView = findViewById(R.id.canvas_view);
 
         ViewTreeObserver viewTreeObserver = canvasView.getViewTreeObserver();
@@ -66,7 +64,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             localPosition = getIntent().getExtras().getInt("POSITION");
             localFilename = getIntent().getExtras().getString("FILENAME");
             localBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
-            canvasTitle.setText(localBoard.getTitle());
+            boardTitle.setText(localBoard.getTitle());
             Board tempBoard = new Gson().fromJson(Utilities.getFileAsString(new File(filePath, localFilename)), Board.class);
             canvasView.setStrokes(tempBoard.getStrokes());
             canvasView.setTexts(tempBoard.getTexts());
@@ -76,7 +74,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             canvasView.setTexts(new ArrayList<>());
         }
 
-        bottomNavigationView = findViewById(R.id.canvas_bottom_nav);
+        bottomNavigationView = findViewById(R.id.board_bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(this);
         getSupportFragmentManager().setFragmentResultListener(Constants.TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY, this, new FragmentResultListener() {
             @Override
@@ -86,7 +84,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
                 if ("add_text".equals(resultKey) && !result.isEmpty()){
                     canvasView.newTextBox(result);
                 } else if ("edit_canvas_title".equals(resultKey)){
-                    canvasTitle.setText(result);
+                    boardTitle.setText(result);
                 }
             }
         });
@@ -95,7 +93,7 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
             Intent resultIntent = new Intent();
             if (localFilename == null){ //if there is no local file: saveTextNote()
                 resultIntent.putExtra("addedFilename", saveTextNote());
-            } else if (!localBoard.getTitle().equals(canvasTitle.getText().toString()) || !Utilities.compareArraylist(localBoard.getStrokes(), canvasView.getStrokes()) || !Utilities.compareArraylist(localBoard.getTexts(), canvasView.getTextBoxes())) { //if local file has been changed
+            } else if (!localBoard.getTitle().equals(boardTitle.getText().toString()) || !localBoard.getStrokes().equals(canvasView.getStrokes()) || !localBoard.getTexts().equals(canvasView.getTextBoxes())) { //if local file has been changed
                 resultIntent.putExtra("addedFilename", saveTextNote());
                 resultIntent.putExtra("deletedPosition", localPosition);
                 new File(filePath, localFilename).delete();
@@ -132,24 +130,14 @@ public class CanvasActivity extends AppCompatActivity implements NavigationBarVi
     }
 
     private @Nullable String saveTextNote() {
-        String title = canvasTitle.getText().toString();
+        String title = boardTitle.getText().toString();
         ArrayList<Stroke> contentStroke = canvasView.getStrokes();
         ArrayList<TextBox> contentText = canvasView.getTextBoxes();
         if (!title.trim().isEmpty() || !contentStroke.isEmpty() || !contentText.isEmpty()){
             String fileName = System.currentTimeMillis() + ".json";
-            try {
-                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-                Board newBoard = new Board(title, contentStroke, contentText, fileName);
-                String jsonString = gson.toJson(newBoard);
-                File file = new File(filePath, fileName);
-
-                FileWriter fileWriter = new FileWriter(file);
-                fileWriter.write(jsonString);
-                fileWriter.close();
-
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+            if (Utilities.writeFile(new File(filePath, fileName), gson.toJson(new Board(title, contentStroke, contentText, fileName)))){
                 return fileName;
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
         return null;

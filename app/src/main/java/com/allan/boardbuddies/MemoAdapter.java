@@ -24,7 +24,7 @@ public abstract class MemoAdapter<T> extends RecyclerView.Adapter<MemoAdapter.Me
     @NonNull
     @Override
     public MemoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.memo_item, parent, false);
         return new MemoViewHolder(itemView, this.onElementListener);
     }
 
@@ -48,7 +48,7 @@ public abstract class MemoAdapter<T> extends RecyclerView.Adapter<MemoAdapter.Me
 
         public MemoViewHolder(View itemView, OnElementListener onElementListener) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.note_title_text);
+            titleTextView = itemView.findViewById(R.id.memo_title_text);
             itemView.setOnClickListener(view -> onElementListener.onElementClick(getBindingAdapterPosition()));
         }
 

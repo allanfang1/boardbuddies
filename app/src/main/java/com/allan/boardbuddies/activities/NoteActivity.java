@@ -1,8 +1,5 @@
 package com.allan.boardbuddies.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,15 +7,19 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.Utilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
-public class EditActivity extends AppCompatActivity {
+import java.io.File;
+
+public class NoteActivity extends AppCompatActivity {
     private EditText editTextTitle;
     private EditText editTextContent;
     private File filePath;
@@ -30,8 +31,8 @@ public class EditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
-        Toolbar toolbar = findViewById(R.id.edit_note_toolbar);
+        setContentView(R.layout.activity_note);
+        Toolbar toolbar = findViewById(R.id.note_toolbar);
         toolbar.setNavigationOnClickListener(v -> {
             Intent resultIntent = new Intent();
             if (localFilename == null){ //if there is no local file: saveTextNote()
@@ -46,8 +47,8 @@ public class EditActivity extends AppCompatActivity {
         });
 
         View extraView = findViewById(R.id.extra_scrollspace);
-        editTextTitle = findViewById(R.id.edit_textnote_title);
-        editTextContent = findViewById(R.id.edit_textnote_content);
+        editTextTitle = findViewById(R.id.edit_text_note_title);
+        editTextContent = findViewById(R.id.edit_text_note_content);
 
         if (getIntent().getExtras() != null){
             filePath = (File)getIntent().getExtras().get("FILEPATH");
@@ -66,7 +67,7 @@ public class EditActivity extends AppCompatActivity {
         });
     }
 
-    private String saveTextNote(){
+    private @Nullable String saveTextNote(){
         String title = editTextTitle.getText().toString();
         String content = editTextContent.getText().toString();
         if (!title.trim().isEmpty() || !content.trim().isEmpty()){
@@ -78,11 +79,11 @@ public class EditActivity extends AppCompatActivity {
                 String jsonString = jsonObject.toString();
 
                 File file = new File(filePath, fileName);
-                FileWriter fileWriter = new FileWriter(file);
-                fileWriter.write(jsonString);
-                fileWriter.close();
-                return fileName;
-            } catch (IOException | JSONException e) {
+
+                if (Utilities.writeFile(file, jsonString)){
+                    return fileName;
+                };
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }

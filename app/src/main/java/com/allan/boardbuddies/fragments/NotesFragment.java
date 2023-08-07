@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,7 +20,7 @@ import android.view.ViewGroup;
 
 import com.allan.boardbuddies.MemoAdapter;
 import com.allan.boardbuddies.Utilities;
-import com.allan.boardbuddies.activities.EditActivity;
+import com.allan.boardbuddies.activities.NoteActivity;
 import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -42,7 +43,7 @@ public class NotesFragment extends Fragment implements MemoAdapter.OnElementList
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        String addedFilename = data.getStringExtra("addedFilename");
+                        @Nullable String addedFilename = data.getStringExtra("addedFilename");
                         int deletedPosition = data.getIntExtra("deletedPosition", -1);
                         if (deletedPosition != -1){
                             notes.remove(deletedPosition);
@@ -93,14 +94,14 @@ public class NotesFragment extends Fragment implements MemoAdapter.OnElementList
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), EditActivity.class);
+            Intent intent = new Intent(v.getContext(), NoteActivity.class);
             intent.putExtra("FILEPATH", directory);
             noteResultLauncher.launch(intent);
         });
     }
 
     public void onElementClick(int position){
-        Intent intent = new Intent(requireContext(), EditActivity.class);
+        Intent intent = new Intent(requireContext(), NoteActivity.class);
         intent.putExtra("TITLE", notes.get(position).getTitle());
         intent.putExtra("CONTENT", notes.get(position).getContent());
         intent.putExtra("FILENAME", notes.get(position).getFileName());
