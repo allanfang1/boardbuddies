@@ -76,13 +76,10 @@ public class NoteActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("title", title);
                 jsonObject.put("content", content);
-                String jsonString = jsonObject.toString();
 
-                File file = new File(filePath, fileName);
-
-                if (Utilities.writeFile(file, jsonString)){
+                if (Utilities.writeFile(new File(filePath, fileName), jsonObject.toString())){
                     return fileName;
-                };
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
