@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
     <!-- Note element in 'N' page (NST) -->
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/note_title_text"
+        android:id="@+id/memo_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"

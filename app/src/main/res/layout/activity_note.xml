@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.EditActivity">
+    tools:context=".activities.NoteActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/edit_note_toolbar"
+        android:id="@+id/note_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Widget.Boardbuddies.Toolbar"
@@ -19,7 +19,7 @@
         app:titleMarginStart="0dp">
 
         <TextView
-            android:id="@+id/custom_title"
+            android:id="@+id/note_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="placeholder"
@@ -30,12 +30,12 @@
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
-        android:id="@+id/noteScrollview"
+        android:id="@+id/note_scrollview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/edit_note_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/note_toolbar"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -46,7 +46,7 @@
             android:orientation="vertical" >
 
             <EditText
-                android:id="@+id/edit_textnote_title"
+                android:id="@+id/edit_text_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
@@ -61,7 +61,7 @@
                 android:textStyle="bold"/>
 
             <EditText
-                android:id="@+id/edit_textnote_content"
+                android:id="@+id/edit_text_note_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"

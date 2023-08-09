@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_notes" />
     <fragment
         android:id="@+id/sharedFragment"
-        android:name="com.allan.boardbuddies.fragments.SharedFragment"
+        android:name="com.allan.boardbuddies.fragments.BoardsFragment"
         android:label="fragment_shared"
-        tools:layout="@layout/fragment_shared" />
+        tools:layout="@layout/fragment_boards" />
     <fragment
         android:id="@+id/trashFragment"
         android:name="com.allan.boardbuddies.fragments.TrashFragment"

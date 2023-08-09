@@ -11,15 +11,16 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allan.boardbuddies.CustomAdapter;
+import com.allan.boardbuddies.MemoAdapter;
 import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.Utilities;
-import com.allan.boardbuddies.activities.CanvasActivity;
+import com.allan.boardbuddies.activities.BoardActivity;
 import com.allan.boardbuddies.models.Board;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -29,9 +30,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class SharedFragment extends Fragment implements CustomAdapter.OnElementListener {
+public class BoardsFragment extends Fragment implements MemoAdapter.OnElementListener {
     private ArrayList<Board> boards = new ArrayList<>();
-    private CustomAdapter adapter;
+    private MemoAdapter adapter;
     private File directory;
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -39,7 +40,7 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        String addedFilename = data.getStringExtra("addedFilename");
+                        @Nullable String addedFilename = data.getStringExtra("addedFilename");
                         int deletedPosition = data.getIntExtra("deletedPosition", -1);
                         if (deletedPosition != -1){
                             boards.remove(deletedPosition);
@@ -53,7 +54,7 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
                 }
             });
 
-    public SharedFragment() {        // Required empty public constructor
+    public BoardsFragment() {        // Required empty public constructor
     }
 
     @Override
@@ -73,9 +74,9 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new CustomAdapter<Board>(boards, this){
+        adapter = new MemoAdapter<Board>(boards, this){
             @Override
-            protected void populateViewHolder(ElementViewHolder holder, Board element) {
+            protected void populateMemoViewHolder(MemoViewHolder holder, Board element) {
                 holder.titleTextView.setText(element.getTitle());
             }
         };
@@ -89,14 +90,14 @@ public class SharedFragment extends Fragment implements CustomAdapter.OnElementL
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), CanvasActivity.class);
+            Intent intent = new Intent(v.getContext(), BoardActivity.class);
             intent.putExtra("FILEPATH", directory);
             resultLauncher.launch(intent);
         });
     }
 
     public void onElementClick(int position){
-        Intent intent = new Intent(requireContext(), CanvasActivity.class);
+        Intent intent = new Intent(requireContext(), BoardActivity.class);
         intent.putExtra("FILENAME", boards.get(position).getFileName());
         intent.putExtra("FILEPATH", directory);
         intent.putExtra("POSITION", position);
