@@ -12,6 +12,11 @@ public class Note {
         this.filename = filename;
     }
 
+    public Note() {
+        this.content = "";
+        this.title = "";
+    }
+
     public String getTitle(){
         return this.title;
     }

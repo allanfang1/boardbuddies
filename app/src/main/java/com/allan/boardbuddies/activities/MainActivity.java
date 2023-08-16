@@ -5,10 +5,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.allan.boardbuddies.R;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -23,10 +21,8 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         NavHostFragment navHostFragment =
-                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host);
         NavController navController = navHostFragment.getNavController();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
 }
