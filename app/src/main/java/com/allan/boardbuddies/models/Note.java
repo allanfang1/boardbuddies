@@ -1,9 +1,14 @@
 package com.allan.boardbuddies.models;
 
+import com.google.gson.annotations.Expose;
+
 // defining a Note
 public class Note {
+    @Expose
     private String title;
+    @Expose
     private String content;
+    @Expose
     private String filename;
 
     public Note(String title, String content, String filename){

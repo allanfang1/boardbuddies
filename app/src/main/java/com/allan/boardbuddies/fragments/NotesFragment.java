@@ -14,38 +14,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.MemoListAdapter;
-import com.allan.boardbuddies.MemoViewModel;
-import com.allan.boardbuddies.Utilities;
+import com.allan.boardbuddies.viewmodels.NoteViewModel;
 import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-
 public class NotesFragment extends Fragment implements MemoListAdapter.OnElementListener {
     private MemoListAdapter adapter;
-    private File directory;
-    private MemoViewModel memoViewModel;
+    private NoteViewModel noteViewModel;
 
-    public NotesFragment() {        // Required empty public constructor
-    }
+    public NotesFragment() {}        // Required empty public constructor
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        directory = new File(getActivity().getApplicationContext().getFilesDir(), Constants.NOTE_DIRECTORY_NAME);
-        if (!directory.exists()){
-            directory.mkdir();
-        }
-        memoViewModel = new ViewModelProvider(requireActivity()).get(MemoViewModel.class);
-        loadNotes();
+        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
     }
 
     @Override
@@ -71,36 +55,17 @@ public class NotesFragment extends Fragment implements MemoListAdapter.OnElement
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            memoViewModel.setSelectedNote(-1);
+            noteViewModel.setSelectedPosition(-1);
             Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment);
         });
-        memoViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
+        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
             adapter.submitList(notes);
         });
     }
 
     public void onElementClick(int position){
-        memoViewModel.setSelectedNote(position);
+        noteViewModel.setSelectedPosition(position);
         Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment);
-    }
-
-    private void loadNotes(){
-        File[] files = directory.listFiles();
-        memoViewModel.clearNotes();
-        if (files != null) {
-            Arrays.sort(files, Comparator.comparing(File::getName).reversed());
-            for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".json")) {
-                    String fileString = Utilities.getFileAsString(file);
-                    try {
-                        JSONObject jsonObject = new JSONObject(fileString);
-                        memoViewModel.addNote(-1, new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
     }
 
     private static class NoteDiffCallback<Note> extends DiffUtil.ItemCallback<Note> {

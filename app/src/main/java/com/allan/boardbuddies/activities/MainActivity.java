@@ -7,6 +7,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.repositories.NoteRepository;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -23,6 +24,9 @@ public class MainActivity extends AppCompatActivity{
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host);
         NavController navController = navHostFragment.getNavController();
+
+        NoteRepository noteRepository = NoteRepository.getInstance();
+        noteRepository.initNoteRepository(this);
 
     }
 }
