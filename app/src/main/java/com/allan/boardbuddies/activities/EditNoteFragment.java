@@ -37,11 +37,9 @@ public class EditNoteFragment extends Fragment {
         editTextTitle = view.findViewById(R.id.edit_text_note_title);
         editTextContent = view.findViewById(R.id.edit_text_note_content);
 
-        editNoteViewModel.getSelectedPosition().observe(getViewLifecycleOwner(), selectedNotePosition -> {
-            editNoteViewModel.setNote();
-            editTextTitle.setText(editNoteViewModel.getLocalNote().getTitle());
-            editTextContent.setText(editNoteViewModel.getLocalNote().getContent());
-        });
+        editNoteViewModel.setNote(getArguments().getInt("position", -1));
+        editTextTitle.setText(editNoteViewModel.getLocalNote().getTitle());
+        editTextContent.setText(editNoteViewModel.getLocalNote().getContent());
 
         extraView.setOnClickListener(v -> {
             editTextContent.requestFocus();

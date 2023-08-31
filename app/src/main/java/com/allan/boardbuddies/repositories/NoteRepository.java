@@ -21,15 +21,14 @@ public class NoteRepository {
     private static volatile NoteRepository noteRepository;
 
     private final MutableLiveData<ArrayList<Note>> notes = new MutableLiveData<>();
-    private final MutableLiveData<Integer> selectedPosition = new MutableLiveData<>();
 
     private File directory;
 
     public NoteRepository(){
     }
 
-    public void initNoteRepository(Context context){
-        directory = new File(context.getFilesDir(), Constants.NOTE_DIRECTORY_NAME);
+    public void initNoteRepository(File file){
+        directory = file;
         if (!directory.exists()){
             directory.mkdir();
         }
@@ -66,22 +65,11 @@ public class NoteRepository {
         return notes;
     }
 
-    public LiveData<Integer> getSelectedPosition(){
-        return selectedPosition;
-    }
-
-    @Nullable
-    public Note getSelectedNote(){
-        if (selectedPosition.getValue() == null){
-            return null;
-        } else if (selectedPosition.getValue() == -1){
+    public Note getNote(int position){
+        if (position == -1){
             return new Note();
         }
-        return notes.getValue().get(selectedPosition.getValue());
-    }
-
-    public void setSelectedPosition(int position){
-        selectedPosition.setValue(position);
+        return notes.getValue().get(position);
     }
 
     public void deleteNote(int position){

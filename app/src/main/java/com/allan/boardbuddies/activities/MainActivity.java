@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.repositories.NoteRepository;
+
+import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -26,7 +29,7 @@ public class MainActivity extends AppCompatActivity{
         NavController navController = navHostFragment.getNavController();
 
         NoteRepository noteRepository = NoteRepository.getInstance();
-        noteRepository.initNoteRepository(this);
+        noteRepository.initNoteRepository(new File(getApplicationContext().getFilesDir(), Constants.NOTE_DIRECTORY_NAME));
 
     }
 }

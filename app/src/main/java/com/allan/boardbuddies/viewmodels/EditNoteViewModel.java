@@ -11,16 +11,15 @@ public class EditNoteViewModel extends ViewModel {
 
     private Note localNote;
 
+    private int position;
+
     public EditNoteViewModel(){
         noteRepository = NoteRepository.getInstance();
     }
 
-    public LiveData<Integer> getSelectedPosition(){
-        return noteRepository.getSelectedPosition();
-    }
-
-    public void setNote(){
-        this.localNote = noteRepository.getSelectedNote();
+    public void setNote(int position){
+        this.position = position;
+        this.localNote = noteRepository.getNote(position);
     }
 
     public void saveNote(String title, String content){
@@ -40,6 +39,8 @@ public class EditNoteViewModel extends ViewModel {
     }
 
     public void deleteNote(){
-        noteRepository.deleteNote(noteRepository.getSelectedPosition().getValue());
+        if (position > -1) {
+            noteRepository.deleteNote(position);
+        }
     }
 }

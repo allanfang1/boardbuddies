@@ -63,8 +63,9 @@ public class NotesFragment extends Fragment implements MemoListAdapter.OnMemoCli
     }
 
     public void onMemoClick(int position){
-        noteViewModel.setSelectedPosition(position);
-        Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment);
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment, bundle);
     }
 
     private static class NoteDiffCallback<Note> extends DiffUtil.ItemCallback<Note> {

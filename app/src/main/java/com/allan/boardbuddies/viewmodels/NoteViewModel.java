@@ -18,8 +18,4 @@ public class NoteViewModel extends ViewModel {
     public LiveData<ArrayList<Note>> getNotes(){
         return noteRepository.getNotes();
     }
-
-    public void setSelectedPosition(int position){
-        noteRepository.setSelectedPosition(position);
-    }
 }
