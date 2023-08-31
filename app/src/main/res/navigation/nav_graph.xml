@@ -3,21 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/notesFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
-        android:id="@+id/notesFragment"
-        android:name="com.allan.boardbuddies.fragments.NotesFragment"
-        android:label="fragment_notes"
-        tools:layout="@layout/fragment_notes" />
+        android:id="@+id/mainFragment"
+        android:name="com.allan.boardbuddies.fragments.MainFragment"
+        android:label="main_fragment"
+        tools:layout="@layout/fragment_main">
+
+        <action
+            android:id="@+id/action_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+
+    </fragment>
+
     <fragment
-        android:id="@+id/sharedFragment"
-        android:name="com.allan.boardbuddies.fragments.BoardsFragment"
+        android:id="@+id/editNoteFragment"
+        android:name="com.allan.boardbuddies.activities.EditNoteFragment"
         android:label="fragment_shared"
-        tools:layout="@layout/fragment_boards" />
-    <fragment
-        android:id="@+id/trashFragment"
-        android:name="com.allan.boardbuddies.fragments.TrashFragment"
-        android:label="fragment_trash"
-        tools:layout="@layout/fragment_trash" />
+        tools:layout="@layout/fragment_boards">
+    </fragment>
+
 </navigation>

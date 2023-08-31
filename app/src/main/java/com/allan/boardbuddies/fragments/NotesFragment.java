@@ -1,15 +1,11 @@
 package com.allan.boardbuddies.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,67 +14,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.allan.boardbuddies.MemoAdapter;
-import com.allan.boardbuddies.Utilities;
-import com.allan.boardbuddies.activities.NoteActivity;
+import com.allan.boardbuddies.MemoListAdapter;
+import com.allan.boardbuddies.viewmodels.NoteViewModel;
 import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+public class NotesFragment extends Fragment implements MemoListAdapter.OnMemoClickListener {
+    private MemoListAdapter adapter;
+    private NoteViewModel noteViewModel;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-
-public class NotesFragment extends Fragment implements MemoAdapter.OnElementListener {
-    private ArrayList<Note> notes = new ArrayList<>();
-    private MemoAdapter adapter;
-    private File directory;
-    ActivityResultLauncher<Intent> noteResultLauncher = registerForActivityResult(new StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        @Nullable String addedFilename = data.getStringExtra("addedFilename");
-                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
-                        if (deletedPosition != -1){
-                            notes.remove(deletedPosition);
-                            adapter.notifyItemRemoved(deletedPosition);
-                        }
-                        if (addedFilename != null) {
-                            loadSingle(addedFilename, 0);
-                            adapter.notifyItemInserted(0);
-                        }
-                    }
-                }
-            });
-
-    public NotesFragment() {        // Required empty public constructor
-    }
+    public NotesFragment() {}        // Required empty public constructor
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        directory = new File(getActivity().getApplicationContext().getFilesDir(), "notes");
-        if (!directory.exists()){
-            directory.mkdir();
-        }
-        loadNotes();
+        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new MemoAdapter<Note>(notes, this){
+        adapter = new MemoListAdapter<Note>(new NoteDiffCallback(), this){
             @Override
             protected void populateMemoViewHolder(MemoViewHolder holder, Note element) {
                 holder.titleTextView.setText(element.getTitle());
@@ -94,49 +55,28 @@ public class NotesFragment extends Fragment implements MemoAdapter.OnElementList
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), NoteActivity.class);
-            intent.putExtra("FILEPATH", directory);
-            noteResultLauncher.launch(intent);
+            onMemoClick(-1);
+        });
+        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
+            adapter.submitList(notes);
         });
     }
 
-    public void onElementClick(int position){
-        Intent intent = new Intent(requireContext(), NoteActivity.class);
-        intent.putExtra("TITLE", notes.get(position).getTitle());
-        intent.putExtra("CONTENT", notes.get(position).getContent());
-        intent.putExtra("FILENAME", notes.get(position).getFileName());
-        intent.putExtra("FILEPATH", directory);
-        intent.putExtra("POSITION", position);
-        noteResultLauncher.launch(intent);
+    public void onMemoClick(int position){
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment, bundle);
     }
 
-    private void loadSingle(String filename, int position){
-        File file = new File(directory, filename);
-        String fileString = Utilities.getFileAsString(file);
-        try {
-            JSONObject jsonObject = new JSONObject(fileString);
-            notes.add(position, new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private static class NoteDiffCallback<Note> extends DiffUtil.ItemCallback<Note> {
+        @Override
+        public boolean areItemsTheSame(Note oldItem, Note newItem) {
+            return oldItem.equals(newItem);
         }
-    }
 
-    private void loadNotes(){
-        File[] files = directory.listFiles();
-        notes.clear();
-        if (files != null) {
-            Arrays.sort(files, Comparator.comparing(File::getName).reversed());
-            for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".json")) {
-                    String fileString = Utilities.getFileAsString(file);
-                    try {
-                        JSONObject jsonObject = new JSONObject(fileString);
-                        notes.add(new Note((String) jsonObject.get("title"), (String) jsonObject.get("content"), file.getName()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        @Override
+        public boolean areContentsTheSame(Note oldItem, Note newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }

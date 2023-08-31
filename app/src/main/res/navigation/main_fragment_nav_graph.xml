@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_fragment_nav_graph"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/notesFragment">
+
+    <fragment
+        android:id="@+id/notesFragment"
+        android:name="com.allan.boardbuddies.fragments.NotesFragment"
+        android:label="fragment_notes"
+        tools:layout="@layout/fragment_notes" />
+    <fragment
+        android:id="@+id/sharedFragment"
+        android:name="com.allan.boardbuddies.fragments.BoardsFragment"
+        android:label="fragment_shared"
+        tools:layout="@layout/fragment_boards" />
+    <fragment
+        android:id="@+id/trashFragment"
+        android:name="com.allan.boardbuddies.fragments.TrashFragment"
+        android:label="fragment_trash"
+        tools:layout="@layout/fragment_trash" />
+
+</navigation>
