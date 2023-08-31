@@ -29,13 +29,8 @@ public class EditNoteFragment extends Fragment {
         editNoteViewModel = new ViewModelProvider(requireActivity()).get(EditNoteViewModel.class);
 
         toolbar.setNavigationOnClickListener(v -> {
-            if (editNoteViewModel.getLocalNote().getFileName() == null){ //if there is no local file: saveTextNote()
-                editNoteViewModel.saveNote(editTextTitle.getText().toString(), editTextContent.getText().toString());
-            } else if (!editNoteViewModel.getLocalNote().getTitle().equals(editTextTitle.getText().toString()) || !editNoteViewModel.getLocalNote().getContent().equals(editTextContent.getText().toString())) { //if local file has been changed
-                editNoteViewModel.deleteNote();
-                editNoteViewModel.saveNote(editTextTitle.getText().toString(), editTextContent.getText().toString());
-            }
-            System.out.println(Navigation.findNavController(requireActivity(), R.id.nav_host).popBackStack());
+            editNoteViewModel.saveNote(editTextTitle.getText().toString(), editTextContent.getText().toString());
+            Navigation.findNavController(requireActivity(), R.id.nav_host).popBackStack();
         });
 
         View extraView = view.findViewById(R.id.extra_scrollspace);

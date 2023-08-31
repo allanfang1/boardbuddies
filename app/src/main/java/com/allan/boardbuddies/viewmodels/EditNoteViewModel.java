@@ -24,9 +24,14 @@ public class EditNoteViewModel extends ViewModel {
     }
 
     public void saveNote(String title, String content){
-        if (!title.trim().isEmpty() || !content.trim().isEmpty()){
-            String fileName = System.currentTimeMillis() + ".json";
-            noteRepository.addNote(0, new Note(title, content, fileName));
+        if (localNote.getFileName() == null || !localNote.getTitle().equals(title) || !localNote.getContent().equals(content)){ //if there is no local file: saveTextNote()
+            if (!title.trim().isEmpty() || !content.trim().isEmpty()){
+                String fileName = System.currentTimeMillis() + ".json";
+                if (localNote.getFileName() != null) {
+                    this.deleteNote();
+                }
+                noteRepository.addNote(0, new Note(title, content, fileName));
+            }
         }
     }
 

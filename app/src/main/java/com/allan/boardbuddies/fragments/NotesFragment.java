@@ -20,7 +20,7 @@ import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class NotesFragment extends Fragment implements MemoListAdapter.OnElementListener {
+public class NotesFragment extends Fragment implements MemoListAdapter.OnMemoClickListener {
     private MemoListAdapter adapter;
     private NoteViewModel noteViewModel;
 
@@ -55,15 +55,14 @@ public class NotesFragment extends Fragment implements MemoListAdapter.OnElement
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            noteViewModel.setSelectedPosition(-1);
-            Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment);
+            onMemoClick(-1);
         });
         noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
             adapter.submitList(notes);
         });
     }
 
-    public void onElementClick(int position){
+    public void onMemoClick(int position){
         noteViewModel.setSelectedPosition(position);
         Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editNoteFragment);
     }
