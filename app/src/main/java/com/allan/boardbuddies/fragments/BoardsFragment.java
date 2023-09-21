@@ -1,58 +1,46 @@
 package com.allan.boardbuddies.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allan.boardbuddies.MemoAdapter;
+import com.allan.boardbuddies.MemoListAdapter;
 import com.allan.boardbuddies.R;
-import com.allan.boardbuddies.Utilities;
-import com.allan.boardbuddies.activities.BoardActivity;
 import com.allan.boardbuddies.models.Board;
+import com.allan.boardbuddies.viewmodels.NoteViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-
-public class BoardsFragment extends Fragment implements MemoAdapter.OnElementListener {
-    private ArrayList<Board> boards = new ArrayList<>();
-    private MemoAdapter adapter;
-    private File directory;
-    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        @Nullable String addedFilename = data.getStringExtra("addedFilename");
-                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
-                        if (deletedPosition != -1){
-                            boards.remove(deletedPosition);
-                            adapter.notifyItemRemoved(deletedPosition);
-                        }
-                        if (addedFilename != null) {
-                            loadSingle(addedFilename, 0);
-                            adapter.notifyItemInserted(0);
-                        }
-                    }
-                }
-            });
+public class BoardsFragment extends Fragment implements MemoListAdapter.OnMemoClickListener {
+    private MemoListAdapter adapter;
+    private NoteViewModel memoViewModel;
+//    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK) {
+//                        Intent data = result.getData();
+//                        @Nullable String addedFilename = data.getStringExtra("addedFilename");
+//                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
+//                        if (deletedPosition != -1){
+//                            boards.remove(deletedPosition);
+//                            adapter.notifyItemRemoved(deletedPosition);
+//                        }
+//                        if (addedFilename != null) {
+//                            loadSingle(addedFilename, 0);
+//                            adapter.notifyItemInserted(0);
+//                        }
+//                    }
+//                }
+//            });
 
     public BoardsFragment() {        // Required empty public constructor
     }
@@ -60,11 +48,7 @@ public class BoardsFragment extends Fragment implements MemoAdapter.OnElementLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        directory = new File(getActivity().getApplicationContext().getFilesDir(), "canvases");
-        if (!directory.exists()){
-            directory.mkdir();
-        }
-        loadNotes();
+        memoViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
     }
 
     @Override
@@ -74,7 +58,7 @@ public class BoardsFragment extends Fragment implements MemoAdapter.OnElementLis
         RecyclerView recyclerView = view.findViewById(R.id.main_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new MemoAdapter<Board>(boards, this){
+        adapter = new MemoListAdapter<Board>(new BoardDiffCallback(), this){
             @Override
             protected void populateMemoViewHolder(MemoViewHolder holder, Board element) {
                 holder.titleTextView.setText(element.getTitle());
@@ -90,36 +74,29 @@ public class BoardsFragment extends Fragment implements MemoAdapter.OnElementLis
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), BoardActivity.class);
-            intent.putExtra("FILEPATH", directory);
-            resultLauncher.launch(intent);
+            onMemoClick(-1);
+        });
+        memoViewModel.getBoards().observe(getViewLifecycleOwner(), boards ->{
+            adapter.submitList(boards);
         });
     }
 
-    public void onElementClick(int position){
-        Intent intent = new Intent(requireContext(), BoardActivity.class);
-        intent.putExtra("FILENAME", boards.get(position).getFileName());
-        intent.putExtra("FILEPATH", directory);
-        intent.putExtra("POSITION", position);
-        resultLauncher.launch(intent);
+    public void onMemoClick(int position){
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.action_to_editBoardFragment, bundle);
     }
 
-    private void loadSingle(String filename, int position){
-        String fileString = Utilities.getFileAsString(new File(directory, filename));
-        boards.add(position, new Gson().fromJson(fileString, Board.class));
-    }
+    private static class BoardDiffCallback<Board> extends DiffUtil.ItemCallback<Board> {
+        @Override
+        public boolean areItemsTheSame(Board oldItem, Board newItem) {
+            return oldItem.equals(newItem);
+        }
 
-    private void loadNotes(){
-        File[] files = directory.listFiles();
-        boards.clear();
-        if (files != null) {
-            Arrays.sort(files, Comparator.comparing(File::getName).reversed());
-            for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".json")) {
-                    String fileString = Utilities.getFileAsString(file);
-                    boards.add(new Gson().fromJson(fileString, Board.class));
-                }
-            }
+        @Override
+        public boolean areContentsTheSame(Board oldItem, Board newItem) {
+            return oldItem.equals(newItem);
         }
     }
+
 }

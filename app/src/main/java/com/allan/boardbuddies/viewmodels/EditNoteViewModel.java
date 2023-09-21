@@ -7,19 +7,15 @@ import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.repositories.NoteRepository;
 
 public class EditNoteViewModel extends ViewModel {
-    private NoteRepository noteRepository;
-
     private Note localNote;
 
     private int position;
 
-    public EditNoteViewModel(){
-        noteRepository = NoteRepository.getInstance();
-    }
+    public EditNoteViewModel(){}
 
     public void setNote(int position){
         this.position = position;
-        this.localNote = noteRepository.getNote(position);
+        this.localNote = NoteRepository.getInstance().getNote(position);
     }
 
     public void saveNote(String title, String content){
@@ -29,7 +25,7 @@ public class EditNoteViewModel extends ViewModel {
                 if (localNote.getFileName() != null) {
                     this.deleteNote();
                 }
-                noteRepository.addNote(0, new Note(title, content, fileName));
+                NoteRepository.getInstance().addNote(0, new Note(title, content, fileName));
             }
         }
     }
@@ -40,7 +36,7 @@ public class EditNoteViewModel extends ViewModel {
 
     public void deleteNote(){
         if (position > -1) {
-            noteRepository.deleteNote(position);
+            NoteRepository.getInstance().deleteNote(position);
         }
     }
 }

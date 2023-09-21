@@ -25,6 +25,14 @@ public class TextBox {
         this.color = color;
     }
 
+    public TextBox(TextBox textBox){
+        this.x = textBox.getX();
+        this.y = textBox.getY();
+        this.textSize = textBox.getTextSize();
+        this.text = textBox.getText();
+        this.color = textBox.getColor();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

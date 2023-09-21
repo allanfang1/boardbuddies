@@ -27,6 +27,12 @@ public class Stroke {
         this.points = new ArrayList<>();
     }
 
+    public Stroke(Stroke stroke){
+        this.color = stroke.getColor();
+        this.width = stroke.getWidth();
+        this.points = stroke.getPoints();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

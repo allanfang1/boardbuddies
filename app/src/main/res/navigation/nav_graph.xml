@@ -15,13 +15,24 @@
             android:id="@+id/action_to_editNoteFragment"
             app:destination="@id/editNoteFragment" />
 
+        <action
+            android:id="@+id/action_to_editBoardFragment"
+            app:destination="@id/editBoardFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/editNoteFragment"
-        android:name="com.allan.boardbuddies.activities.EditNoteFragment"
-        android:label="fragment_shared"
-        tools:layout="@layout/fragment_boards">
+        android:name="com.allan.boardbuddies.fragments.EditNoteFragment"
+        android:label="edit_note_fragment"
+        tools:layout="@layout/fragment_edit_note">
+    </fragment>
+
+    <fragment
+        android:id="@+id/editBoardFragment"
+        android:name="com.allan.boardbuddies.fragments.EditBoardFragment"
+        android:label="edit_board_fragment"
+        tools:layout="@layout/fragment_edit_board">
     </fragment>
 
 </navigation>
