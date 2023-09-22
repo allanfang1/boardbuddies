@@ -10,8 +10,8 @@ import com.allan.boardbuddies.repositories.NoteRepository;
 
 import java.util.ArrayList;
 
-public class NoteViewModel extends ViewModel {
-    public NoteViewModel(){
+public class MemoListViewModel extends ViewModel {
+    public MemoListViewModel(){
     }
 
     public LiveData<ArrayList<Note>> getNotes(){

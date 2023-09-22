@@ -15,21 +15,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.allan.boardbuddies.MemoListAdapter;
-import com.allan.boardbuddies.viewmodels.NoteViewModel;
+import com.allan.boardbuddies.viewmodels.MemoListViewModel;
 import com.allan.boardbuddies.models.Note;
 import com.allan.boardbuddies.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class NotesFragment extends Fragment implements MemoListAdapter.OnMemoClickListener {
     private MemoListAdapter adapter;
-    private NoteViewModel noteViewModel;
+    private MemoListViewModel memoListViewModel;
 
     public NotesFragment() {}        // Required empty public constructor
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+        memoListViewModel = new ViewModelProvider(requireActivity()).get(MemoListViewModel.class);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class NotesFragment extends Fragment implements MemoListAdapter.OnMemoCli
         addNoteFab.setOnClickListener(v -> {
             onMemoClick(-1);
         });
-        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
+        memoListViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
             adapter.submitList(notes);
         });
     }

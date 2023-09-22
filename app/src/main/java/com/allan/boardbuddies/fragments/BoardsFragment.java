@@ -16,12 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.allan.boardbuddies.MemoListAdapter;
 import com.allan.boardbuddies.R;
 import com.allan.boardbuddies.models.Board;
-import com.allan.boardbuddies.viewmodels.NoteViewModel;
+import com.allan.boardbuddies.viewmodels.MemoListViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class BoardsFragment extends Fragment implements MemoListAdapter.OnMemoClickListener {
     private MemoListAdapter adapter;
-    private NoteViewModel memoViewModel;
+    private MemoListViewModel memoListViewModel;
 //    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
 //            new ActivityResultCallback<ActivityResult>() {
 //                @Override
@@ -48,7 +48,7 @@ public class BoardsFragment extends Fragment implements MemoListAdapter.OnMemoCl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        memoViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+        memoListViewModel = new ViewModelProvider(requireActivity()).get(MemoListViewModel.class);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BoardsFragment extends Fragment implements MemoListAdapter.OnMemoCl
         addNoteFab.setOnClickListener(v -> {
             onMemoClick(-1);
         });
-        memoViewModel.getBoards().observe(getViewLifecycleOwner(), boards ->{
+        memoListViewModel.getBoards().observe(getViewLifecycleOwner(), boards ->{
             adapter.submitList(boards);
         });
     }
