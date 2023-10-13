@@ -1,6 +1,5 @@
 package com.allan.boardbuddies.viewmodels;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.allan.boardbuddies.models.Note;
@@ -8,7 +7,6 @@ import com.allan.boardbuddies.repositories.NoteRepository;
 
 public class EditNoteViewModel extends ViewModel {
     private Note localNote;
-
     private int position;
 
     public EditNoteViewModel(){}

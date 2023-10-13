@@ -13,26 +13,25 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.viewmodels.EditBoardViewModel;
 
-public class TextDialogFragment extends DialogFragment {
+public class TitleDialogFragment extends DialogFragment {
 
     private EditText captionText;
+    private EditBoardViewModel editBoardViewModel;
 
-    public static TextDialogFragment newInstance(String in, String resultKey) {
-        TextDialogFragment f = new TextDialogFragment();
-        Bundle args = new Bundle();
-        args.putString("text", in);
-        args.putString("resultKey", resultKey);
-        f.setArguments(args);
+    public static TitleDialogFragment newInstance() {
+        TitleDialogFragment f = new TitleDialogFragment();
         return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        editBoardViewModel = new ViewModelProvider(requireActivity()).get(EditBoardViewModel.class);
         setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme_Holo);
     }
 
@@ -45,10 +44,11 @@ public class TextDialogFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         captionText = view.findViewById(R.id.dialog_input);
-        captionText.setText(getArguments().getString("text"));
+        captionText.setText(editBoardViewModel.getTitle().getValue());
         captionText.requestFocus();
         captionText.setSelection(captionText.getText().length());
         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -56,12 +56,8 @@ public class TextDialogFragment extends DialogFragment {
 
         Button button = view.findViewById(R.id.dialog_button);
         button.setOnClickListener(v -> {
-            Bundle result = new Bundle();
-            result.putString("resultKey", getArguments().getString("resultKey"));
-            result.putString(Constants.TEXT_DIALOG_FRAGMENT_ADDED_TEXT, String.valueOf(captionText.getText()));
-            getParentFragmentManager().setFragmentResult(Constants.TEXT_DIALOG_FRAGMENT_ADD_TEXT_REQUEST_KEY, result);
+            editBoardViewModel.getTitle().setValue(String.valueOf(captionText.getText()));
             dismiss();
         });
-        super.onViewCreated(view, savedInstanceState);
     }
 }

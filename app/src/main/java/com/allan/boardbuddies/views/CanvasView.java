@@ -69,8 +69,9 @@ public class CanvasView extends View{
             paint.setStyle(Paint.Style.FILL);
             canvas.drawText(textBox.getText(), textBox.getX(), textBox.getY(), paint);
         }
-        canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
-
+        if (bitmap != null) {
+            canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
+        }
         canvas.restore();
     }
 
@@ -178,7 +179,6 @@ public class CanvasView extends View{
     }
 
     public void setStrokes(ArrayList<Stroke> strokes) {
-
         for (Stroke stroke : strokes){
             Path path = new Path();
             stroke.setPath(path);

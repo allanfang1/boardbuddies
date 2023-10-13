@@ -22,25 +22,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class BoardsFragment extends Fragment implements MemoListAdapter.OnMemoClickListener {
     private MemoListAdapter adapter;
     private MemoListViewModel memoListViewModel;
-//    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new StartActivityForResult(),
-//            new ActivityResultCallback<ActivityResult>() {
-//                @Override
-//                public void onActivityResult(ActivityResult result) {
-//                    if (result.getResultCode() == Activity.RESULT_OK) {
-//                        Intent data = result.getData();
-//                        @Nullable String addedFilename = data.getStringExtra("addedFilename");
-//                        int deletedPosition = data.getIntExtra("deletedPosition", -1);
-//                        if (deletedPosition != -1){
-//                            boards.remove(deletedPosition);
-//                            adapter.notifyItemRemoved(deletedPosition);
-//                        }
-//                        if (addedFilename != null) {
-//                            loadSingle(addedFilename, 0);
-//                            adapter.notifyItemInserted(0);
-//                        }
-//                    }
-//                }
-//            });
 
     public BoardsFragment() {        // Required empty public constructor
     }
@@ -73,12 +54,8 @@ public class BoardsFragment extends Fragment implements MemoListAdapter.OnMemoCl
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState){
         FloatingActionButton addNoteFab = view.findViewById(R.id.add_note_fab);
-        addNoteFab.setOnClickListener(v -> {
-            onMemoClick(-1);
-        });
-        memoListViewModel.getBoards().observe(getViewLifecycleOwner(), boards ->{
-            adapter.submitList(boards);
-        });
+        addNoteFab.setOnClickListener(v -> onMemoClick(-1));
+        memoListViewModel.getBoards().observe(getViewLifecycleOwner(), boards -> adapter.submitList(boards));
     }
 
     public void onMemoClick(int position){
