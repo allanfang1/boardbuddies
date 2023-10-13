@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.models.Board;
-import com.allan.boardbuddies.models.Note;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -69,7 +68,7 @@ public class BoardRepository {
         }
     }
 
-    public void deleteNote(int position) {
+    public void deleteBoard(int position) {
         new File(directory, boards.getValue().get(position).getFileName()).delete();
         boards.getValue().remove(position);
     }

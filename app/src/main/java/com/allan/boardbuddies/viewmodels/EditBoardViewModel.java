@@ -49,9 +49,9 @@ public class EditBoardViewModel extends ViewModel {
             }
         }
     }
-    private void deleteBoard () {
+    public void deleteBoard () {
         if (position > -1) {
-            BoardRepository.getInstance().deleteNote(position);
+            BoardRepository.getInstance().deleteBoard(position);
         }
     }
 }
