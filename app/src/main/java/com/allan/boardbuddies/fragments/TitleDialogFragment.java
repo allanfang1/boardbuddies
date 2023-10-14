@@ -56,7 +56,7 @@ public class TitleDialogFragment extends DialogFragment {
 
         Button button = view.findViewById(R.id.dialog_button);
         button.setOnClickListener(v -> {
-            editBoardViewModel.getTitle().setValue(String.valueOf(captionText.getText()));
+            editBoardViewModel.setTitle(String.valueOf(captionText.getText()));
             dismiss();
         });
     }

@@ -1,5 +1,6 @@
 package com.allan.boardbuddies.viewmodels;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -26,15 +27,19 @@ public class EditBoardViewModel extends ViewModel {
         this.texts.setValue(new ArrayList<TextBox>(localBoard.getTexts().stream().map(TextBox::new).collect(Collectors.toList())));
     }
 
-    public MutableLiveData<String> getTitle(){
+    public LiveData<String> getTitle(){
         return title;
     }
 
-    public MutableLiveData<ArrayList<Stroke>> getStrokes(){
+    public void setTitle(String title){
+        this.title.setValue(title);
+    }
+
+    public LiveData<ArrayList<Stroke>> getStrokes(){
         return strokes;
     }
 
-    public MutableLiveData<ArrayList<TextBox>> getTexts(){
+    public LiveData<ArrayList<TextBox>> getTexts(){
         return texts;
     }
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.allan.boardbuddies.Utilities;
 import com.allan.boardbuddies.models.Board;
-import com.allan.boardbuddies.models.Note;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -29,10 +28,10 @@ public class BoardRepository {
         if (!directory.exists()){
             directory.mkdir();
         }
-        loadNotes(directory);
+        loadBoards(directory);
     }
 
-    private void loadNotes(File directory){
+    private void loadBoards(File directory){
         File[] files = directory.listFiles();
         ArrayList<Board> temp = new ArrayList<>();
         if (files != null) {
