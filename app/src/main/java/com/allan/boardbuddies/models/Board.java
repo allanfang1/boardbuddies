@@ -22,6 +22,9 @@ public class Board {
     }
 
     public Board() {
+        title = "";
+        strokes = new ArrayList<>();
+        texts = new ArrayList<>();
     }
 
     public String getTitle() {

@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/sharedFragment"
         android:name="com.allan.boardbuddies.fragments.BoardsFragment"
-        android:label="fragment_shared"
+        android:label="fragment_boards"
         tools:layout="@layout/fragment_boards" />
     <fragment
         android:id="@+id/trashFragment"

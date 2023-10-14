@@ -1,4 +1,4 @@
-package com.allan.boardbuddies.activities;
+package com.allan.boardbuddies;
 
 import android.os.Bundle;
 
@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.allan.boardbuddies.Constants;
 import com.allan.boardbuddies.R;
+import com.allan.boardbuddies.repositories.BoardRepository;
 import com.allan.boardbuddies.repositories.NoteRepository;
 
 import java.io.File;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity{
 
         NoteRepository noteRepository = NoteRepository.getInstance();
         noteRepository.initNoteRepository(new File(getApplicationContext().getFilesDir(), Constants.NOTE_DIRECTORY_NAME));
+        BoardRepository boardRepository = BoardRepository.getInstance();
+        boardRepository.initBoardRepository(new File(getApplicationContext().getFilesDir(), Constants.BOARD_DIRECTORY_NAME));
+
 
     }
 }
