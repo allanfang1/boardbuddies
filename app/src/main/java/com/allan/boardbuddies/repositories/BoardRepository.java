@@ -28,10 +28,10 @@ public class BoardRepository {
         if (!directory.exists()){
             directory.mkdir();
         }
-        loadNotes(directory);
+        loadBoards(directory);
     }
 
-    private void loadNotes(File directory){
+    private void loadBoards(File directory){
         File[] files = directory.listFiles();
         ArrayList<Board> temp = new ArrayList<>();
         if (files != null) {
