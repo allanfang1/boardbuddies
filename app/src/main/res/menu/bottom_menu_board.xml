@@ -6,7 +6,7 @@
         android:icon="@drawable/baseline_article_24"
         android:title="Text" />
     <item
-        android:id="@+id/sharedFragment"
+        android:id="@+id/boardsFragment"
         android:icon="@drawable/baseline_assignment_ind_24"
         android:title="Shared" />
     <item

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ public class EditNoteFragment extends Fragment {
     private Toolbar toolbar;
     private View extraView;
     private EditNoteViewModel editNoteViewModel;
+    private ImageButton deleteButton;
 
     @Nullable
     @Override
@@ -33,6 +35,7 @@ public class EditNoteFragment extends Fragment {
         extraView = view.findViewById(R.id.extra_scrollspace);
         editTextTitle = view.findViewById(R.id.edit_text_note_title);
         editTextContent = view.findViewById(R.id.edit_text_note_content);
+        deleteButton = view.findViewById(R.id.delete_icon);
         return view;
     }
 
@@ -44,6 +47,14 @@ public class EditNoteFragment extends Fragment {
         toolbar.setNavigationOnClickListener(v -> {
             editNoteViewModel.saveNote(editTextTitle.getText().toString(), editTextContent.getText().toString());
             Navigation.findNavController(requireActivity(), R.id.nav_host).popBackStack();
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editNoteViewModel.deleteNote();
+                Navigation.findNavController(requireActivity(), R.id.nav_host).popBackStack();
+            }
         });
 
         editNoteViewModel.setNote(getArguments().getInt("position", -1));

@@ -9,12 +9,12 @@
         android:id="@+id/notesFragment"
         android:name="com.allan.boardbuddies.fragments.NotesFragment"
         android:label="fragment_notes"
-        tools:layout="@layout/fragment_notes" />
+        tools:layout="@layout/fragment_list" />
     <fragment
-        android:id="@+id/sharedFragment"
+        android:id="@+id/boardsFragment"
         android:name="com.allan.boardbuddies.fragments.BoardsFragment"
         android:label="fragment_boards"
-        tools:layout="@layout/fragment_boards" />
+        tools:layout="@layout/fragment_list" />
     <fragment
         android:id="@+id/trashFragment"
         android:name="com.allan.boardbuddies.fragments.TrashFragment"

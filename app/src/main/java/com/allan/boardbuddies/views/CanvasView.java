@@ -51,28 +51,30 @@ public class CanvasView extends View{
 
     @Override
     protected void onDraw(Canvas canvas){
-        canvas.save();
-        canvas.drawColor(Color.WHITE);
-        paint.setStyle(Paint.Style.STROKE);
-        for (Stroke stroke : strokes) {
-            paint.setColor(stroke.getColor());
-            paint.setStrokeWidth(stroke.getWidth());
-            canvas.drawPath(stroke.getPath(), paint);
-        }
-        paint.setStyle(Paint.Style.FILL);
-        for (TextBox textBox : texts) {
-            paint.setTextSize(textBox.getTextSize()); // Set the text size for each item
-            paint.setColor(textBox.getColor());
+        if (strokes != null || texts != null) {
+            canvas.save();
+            canvas.drawColor(Color.WHITE);
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(1);
-            canvas.drawRect(getBoundsF(textBox), paint);
+            for (Stroke stroke : strokes) {
+                paint.setColor(stroke.getColor());
+                paint.setStrokeWidth(stroke.getWidth());
+                canvas.drawPath(stroke.getPath(), paint);
+            }
             paint.setStyle(Paint.Style.FILL);
-            canvas.drawText(textBox.getText(), textBox.getX(), textBox.getY(), paint);
+            for (TextBox textBox : texts) {
+                paint.setTextSize(textBox.getTextSize()); // Set the text size for each item
+                paint.setColor(textBox.getColor());
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(1);
+                canvas.drawRect(getBoundsF(textBox), paint);
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawText(textBox.getText(), textBox.getX(), textBox.getY(), paint);
+            }
+            if (bitmap != null) {
+                canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
+            }
+            canvas.restore();
         }
-        if (bitmap != null) {
-            canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
-        }
-        canvas.restore();
     }
 
     @Override

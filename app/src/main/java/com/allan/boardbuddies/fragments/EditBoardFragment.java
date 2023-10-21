@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class EditBoardFragment extends Fragment implements NavigationBarView.OnI
     private CanvasView canvasView;
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
+    private ImageButton deleteButton;
 
     @Nullable
     @Override
@@ -40,7 +42,7 @@ public class EditBoardFragment extends Fragment implements NavigationBarView.OnI
         boardTitle = view.findViewById(R.id.board_title);
         canvasView = view.findViewById(R.id.canvas_view);
         bottomNavigationView = view.findViewById(R.id.board_bottom_nav);
-
+        deleteButton = view.findViewById(R.id.delete_icon);
         return view;
     }
 
@@ -61,6 +63,14 @@ public class EditBoardFragment extends Fragment implements NavigationBarView.OnI
                 }
             });
         }
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editBoardViewModel.deleteBoard();
+                Navigation.findNavController(requireActivity(), R.id.nav_host).popBackStack();
+            }
+        });
 
         toolbar.setNavigationOnClickListener(v -> {
             editBoardViewModel.saveBoard(boardTitle.getText().toString(), canvasView.getStrokes(), canvasView.getTextBoxes());
