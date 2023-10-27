@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Placeholder and longer uhhh depends"
+                android:text=""
                 android:textColor="#F5F5F5"
                 android:textSize="22sp"
                 android:textStyle="bold"
