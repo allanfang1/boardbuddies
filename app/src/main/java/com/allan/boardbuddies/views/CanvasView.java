@@ -53,7 +53,7 @@ public class CanvasView extends View{
     protected void onDraw(Canvas canvas){
         if (strokes != null || texts != null) {
             canvas.save();
-            canvas.drawColor(Color.WHITE);
+            canvas.drawColor(Color.TRANSPARENT);
             paint.setStyle(Paint.Style.STROKE);
             for (Stroke stroke : strokes) {
                 paint.setColor(stroke.getColor());
@@ -143,7 +143,7 @@ public class CanvasView extends View{
     }
 
     public void newTextBox(String text){
-        TextBox textBox = new TextBox(0, canvas.getHeight() / 2f, text, 75, Color.BLUE);
+        TextBox textBox = new TextBox(0, canvas.getHeight() / 2f, text, 75, Color.RED);
         textBox.setX((canvas.getWidth() - getBoundsF(textBox).width()) / 2f);
         texts.add(textBox);
         invalidate();
