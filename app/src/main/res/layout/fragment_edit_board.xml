@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.Boardbuddies"
+    android:background="?android:attr/windowBackground"
     tools:context=".fragments.EditBoardFragment">
 
     <androidx.appcompat.widget.Toolbar
@@ -27,8 +29,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Placeholder and longer uhhh depends"
-                android:textColor="#F5F5F5"
+                android:text=""
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:maxLines="1"
@@ -40,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/baseline_delete_24"
                 android:contentDescription="Delete Button"
-                android:background="@null"/>
+                android:background="@null" />
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -56,10 +57,10 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:theme="@style/Theme.Boardbuddies"
         android:id="@+id/board_bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
